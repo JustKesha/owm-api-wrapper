@@ -70,6 +70,8 @@ def knots_to_beaufort_scale_index(knots:float) -> int:
         if knots <= ceiling:
             return i
 
+# HUMIDITY
+
 def get_humidity_index(humidity:int) -> int:
     if   humidity == 0:
         return 0
@@ -81,6 +83,8 @@ def get_humidity_index(humidity:int) -> int:
         return 3
     else:
         return 4
+
+# CARDINAL POINTS
 
 def degree_to_cardinal_point_id(degree:float) -> int:
     if   degree < 22.5:

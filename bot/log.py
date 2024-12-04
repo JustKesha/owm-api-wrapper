@@ -1,16 +1,24 @@
+# TODO Simplify
+
 class MessageTypes():
     PROC = 0
-    INFO = 1
-    WARN = 2
+    WARN = 1
+    INTR = 2
+    INFO = 3
 
-class FilterTypes():
-    # TODO Add filters
-    NONE = 0
+class Filters():
+    NONE = []
+    NO_INFO = [
+        MessageTypes.PROC,
+        MessageTypes.WARN,
+        MessageTypes.INTR,
+    ]
 
-prefixes = {
+PREFIXES = {
     MessageTypes.PROC: '/',
-    MessageTypes.INFO: '?',
     MessageTypes.WARN: '!',
+    MessageTypes.INTR: '-',
+    MessageTypes.INFO: '?',
 }
 
 active = True
@@ -24,12 +32,9 @@ def set_active(value:bool) -> None:
     global active
     active = value
 
-def set_filter(filter:int) -> None:
+def set_filter(value:list) -> None:
     global allowed_message_types
-
-    match filter:
-        case FilterTypes.NONE:
-            allowed_message_types = []
+    allowed_message_types = value
 
 def set_name(value:str) -> None:
     global name
@@ -47,4 +52,4 @@ def log(message:str, type:int, ongoing:bool=False) -> None:
     if not active: return
     if allowed_message_types and not type in allowed_message_types: return
 
-    print(f'{prefixes[type]} {(name + name_separator) if name else ""}{message}{ongoing_postfix if ongoing else ""}')
+    print(f'{PREFIXES[type]} {(name + name_separator) if name else ""}{message}{ongoing_postfix if ongoing else ""}')

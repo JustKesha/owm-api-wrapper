@@ -26,6 +26,7 @@ async def request_data(lat:float=0, lon:float=0, test:bool=False) -> dict:
 
     request_url = BASE_URL + f'?lat={lat}&lon={lon}&appid={KEY}'
 
+    # TODO Delete this later
     print(request_url)
 
     try:

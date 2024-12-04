@@ -18,15 +18,17 @@ def configurate():
     geocode.configurate(user_agent=os.getenv('USER_AGENT'))
     bot.configurate(api_key=os.getenv('DISCORD_API_KEY'), test_guild_ids=[os.getenv('DISCORD_TEST_GUILD_ID')])
 
-async def run_tests(logger_filter:int=tests.logger.MessageFilters.ONLY_RESULTS) -> bool:
+async def run_tests(log_filter:int=tests.logger.MessageFilters.ONLY_RESULTS) -> bool:
     print('/ running basic module tests')
 
-    tests.logger.set_filter(logger_filter)
+    tests.logger.set_filter(log_filter)
     
     return await tests.run_tests()
 
-def run_bot():
+def run_bot(log_filter:list=bot.log.Filters.NONE):
     print('/ runnig bot')
+
+    bot.log.set_filter(log_filter)
     
     try:
         bot.start()
@@ -48,7 +50,7 @@ async def main(include_tests:bool=False):
         return
 
 # This all is just for the sole purpose of using the silly tests i wrote
-# And it seems like bit too much, I might just wanna remove em bc +2 dependencies
+# And it seems like bit too much, might just wanna remove them bc +2 dependencies
 if __name__ ==  '__main__':
     nest_asyncio.apply()
     loop = asyncio.get_event_loop()

@@ -23,7 +23,7 @@ async def respond_with_error(
 def get_weather_embed(location:Location, report:Weather) -> discord.Embed:
     embed = discord.Embed(
         title = location.get_address_str(),
-        url = f'https://maps.google.com/?q={location.lat},{location.lon}',
+        url = location.get_google_maps_url(),
         description =
             ', '.join([
                 report.title,
@@ -44,12 +44,8 @@ def get_weather_embed(location:Location, report:Weather) -> discord.Embed:
         inline = True,
         )
     
-    # Adds bit more space in between inline feields :3
-    embed.add_field(
-        name = ' ',
-        value = ' ',
-        inline = True,
-        )
+    # Adds some more space in between inline feields
+    embed.add_field(name=' ', value=' ', inline=True)
     
     embed.add_field(
         name = 'Wind',
@@ -57,24 +53,27 @@ def get_weather_embed(location:Location, report:Weather) -> discord.Embed:
             ',\n'.join([
                 f'Speed {report.wind.speed.ms.get_str()}',
                 f'Gusts up to {report.wind.gusts.ms.get_str()}',
-                f'Comin from {report.wind.cardinal_point.long}',
+                f'Coming from {report.wind.cardinal_point.long}',
                 # f'Comin from {report.wind.cardinal_point.long} ({report.wind.cardinal_point.short}) {report.wind.degree.get_str()}',
                 ]) + '.',
         inline = True,
         )
     
+    # DETAILS FEILD
+
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Continue here...
+    # TODO Add .get_str to all the following elements (like was done with humidity below)
+
+    clouds_str = f'lots of clouds {report.clouds.get_str()}'
+    pressure_str = f'low pressure {report.pressure.ground_level.mbar.get_str()}'
+    visibility_str = f'great visibility {report.visibility.m.get_str()}'
+
     embed.add_field(
         name = 'Details',
-        value =
-            ', '.join([
-                f'{report.humidity.name.capitalize()} {report.humidity.percentage.get_str()}',
-                f'lots of clouds {report.clouds.get_str()}',
-                f'\nLow pressure {report.pressure.ground_level.mbar.get_str()}',
-                f'great visibility {report.visibility.m.get_str()}',
-                ]) + '.',
+        value = ', '.join([report.humidity.get_str().capitalize(), clouds_str, '\n' + pressure_str.capitalize(), visibility_str]) + '.',
         inline = False,
         )
-    
+
     embed.set_thumbnail(url=report.default_icon_url)
     embed.set_footer(text=location.get_address_str(full=True))
 

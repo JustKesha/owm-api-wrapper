@@ -1,8 +1,7 @@
 import discord # py-cord
 
 from .log import log, MessageTypes
-from . import utils as local_utils
-import utils
+from utils import discord as discord_utils
 from geocode import get_location, Location
 from weather import get_weather, Weather
 
@@ -49,7 +48,7 @@ def init():
                 author:discord.User = interaction.user
 
                 # TODO Add slash command name to the print
-                log(f'"{author.global_name}" used some interaction', MessageTypes.PROC)
+                log(f'"{author.global_name}" used some interaction', MessageTypes.INTR)
             case _:
                 log('unknown interaction', MessageTypes.WARN)
 
@@ -66,24 +65,23 @@ def init():
         location:Location = get_location(search)
         
         if location == None:
-            return await local_utils.respond_with_error(
+            return await discord_utils.respond_with_error(
                 ctx,
                 error='Couldnt pinpoint the location.',
                 solution='Maybe try reformulating your query or swapping parts of your query?',
                 )
 
         try:
-            # NOTE DOING TEST REQUESTS
-            report:Weather = await get_weather(lat=location.lat, lon=location.lon)
+            report:Weather = await get_weather(lat=location.lat, lon=location.lon, test=True)
         except Exception as e:
             print(e)
-            return await local_utils.respond_with_error(
+            return await discord_utils.respond_with_error(
                 ctx,
                 error='Couldnt load the weather report.',
                 solution='Maybe try again later?',
                 )
 
-        await ctx.send_followup(embed=local_utils.get_weather_embed(location=location, report=report))
+        await ctx.send_followup(embed=discord_utils.get_weather_embed(location=location, report=report))
 
     @bot.slash_command(
         name='find',
@@ -96,7 +94,7 @@ def init():
         location:Location = get_location(search)
         
         if location == None:
-            return await local_utils.respond_with_error(
+            return await discord_utils.respond_with_error(
                 ctx,
                 error='Couldnt find the location.',
                 solution='Maybe try reformulating your query or swapping parts of your query?',

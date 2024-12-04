@@ -18,6 +18,7 @@ with importlib.resources.open_text(CURRENT_PACKAGE_NAME, CORDINAL_POINTS_FILE_NA
 with importlib.resources.open_text(CURRENT_PACKAGE_NAME, HUMIDITY_POINTS_FILE_NAME) as file:
     humidity_data = json.load(file)
 
+# TODO Should be renamed to something like NumericValue bc of accuracy
 class Value():
     def __init__(self, value, unit:str, accuracy:int=2, separator:str=' ') -> None:
         self.set_value(value)
@@ -37,12 +38,15 @@ class Value():
     def set_separator(self, separator:str):
         self.separator = separator
 
-    # TODO REPLACE WITH GET_VALUE -> FLOAT
-    def get_str(self, separator:str=None, accuracy:int=None):
-        if separator == None: separator = self.separator
-        if accuracy == None: accuracy = self.accuracy
+    def get_value(self, accuracy:int=None) -> float:
+        if accuracy is None: accuracy = self.accuracy
 
-        value = round(self.value, accuracy)
+        return round(self.value, accuracy)
+
+    def get_str(self, separator:str=None, accuracy:int=None) -> str:
+        if separator is None: separator = self.separator
+
+        value = self.get_value(accuracy)
         unit = self.unit
 
         return separator.join([str(value), unit])
@@ -137,6 +141,16 @@ class Humidity():
     def __init__(self, humidity:int) -> None:
         self.percentage = Value(humidity, '%', 0, '')
         self.name:str = humidity_data[convert.get_humidity_index(humidity)]
+    
+    def get_str(self) -> str:
+        output = self.name
+
+        if not self.percentage.get_value() in [0, 100]:
+            output += f' {self.percentage.get_str()}'
+        
+        return output
+        
+
 
 class Weather():
     def __init__(

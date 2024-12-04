@@ -9,6 +9,9 @@ class Location():
         self.lat = lat
         self.lon = lon
 
+    def get_google_maps_url(self) -> str:
+        return f'https://maps.google.com/?q={self.lat},{self.lon}'
+
     def get_address_str(self, full:bool=False, include_type:bool=False) -> str:
         elements = [f'{self.name} {self.type}'] if include_type else [self.name]
 
@@ -18,7 +21,8 @@ class Location():
         elements.append(self.country)
 
         return ', '.join(elements)
-    
+
+    # NOTE Atm only used in a test discord command
     def get_str(self):
         return f'{" ".join([str(self.lat), str(self.lon)])} {self.get_address_str(full=True,include_type=True)} {self.country_code}'
 

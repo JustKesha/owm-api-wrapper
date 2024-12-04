@@ -1,0 +1,34 @@
+[
+    {
+        "short": "N",
+        "long": "North"
+    },
+    {
+        "short": "NE",
+        "long": "North-East"
+    },
+    {
+        "short": "E",
+        "long": "East"
+    },
+    {
+        "short": "SE",
+        "long": "South-East"
+    },
+    {
+        "short": "S",
+        "long": "South"
+    },
+    {
+        "short": "SW",
+        "long": "South-West"
+    },
+    {
+        "short": "W",
+        "long": "West"
+    },
+    {
+        "short": "NW",
+        "long": "North-West"
+    }
+]

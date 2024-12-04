@@ -1,0 +1,50 @@
+{
+  "coord": {
+    "lon": 50.15,
+    "lat": 53.2001
+  },
+  "weather": [
+    {
+      "id": 803,
+      "main": "Clouds",
+      "description": "broken clouds",
+      "icon": "04n" 
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": 270.2,
+    "feels_like": 270.2,
+    "temp_min": 270.2,
+    "temp_max": 270.2,
+
+    "pressure": 1033,
+    "sea_level": 1033,
+    "grnd_level": 1022,
+
+    "humidity": 83
+  },
+  "visibility": 10000,
+  "wind": {
+    "speed": 1.25,
+    "deg": 337,
+    "gust": 2.19
+  },
+  "clouds": {
+    "all": 55
+  },
+
+  "dt": 1731373008,
+  "sys": {
+    "type": 1,
+    "id": 9051,
+    "country": "RU",
+    "sunrise": 1731383923,
+    "sunset": 1731415715
+  },
+  "timezone": 14400,
+  
+  "id": 499099,
+  "name": "Samara",
+  "cod": 200
+}

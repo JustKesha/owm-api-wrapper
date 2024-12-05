@@ -72,7 +72,7 @@ def init():
                 )
 
         try:
-            report:Weather = await get_weather(lat=location.lat, lon=location.lon, test=True)
+            report:Weather = await get_weather(lat=location.lat, lon=location.lon)
         except Exception as e:
             print(e)
             return await discord_utils.respond_with_error(

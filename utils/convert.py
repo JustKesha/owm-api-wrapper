@@ -59,6 +59,7 @@ def knots_to_beaufort_scale_index(knots:float) -> int:
 
     for i in range(max_i + 1):
         # I didnt find the match construction to be possible here
+
         if i == max_i:
             return i
         
@@ -70,7 +71,7 @@ def knots_to_beaufort_scale_index(knots:float) -> int:
         if knots <= ceiling:
             return i
 
-# HUMIDITY
+# CUSTOM INDEXES
 
 def get_humidity_index(humidity:int) -> int:
     if   humidity == 0:
@@ -83,6 +84,45 @@ def get_humidity_index(humidity:int) -> int:
         return 3
     else:
         return 4
+
+def get_cloudiness_index(cloudiness:int) -> int:
+    if   cloudiness == 0:
+        return 0
+    elif cloudiness < 35:
+        return 1
+    elif cloudiness < 65:
+        return 2
+    elif cloudiness < 100:
+        return 3
+    else:
+        return 4
+
+def get_visibility_index(visibility_m:int) -> int:
+    if   visibility_m < 150:
+        return 0
+    elif visibility_m < 300:
+        return 1
+    
+    elif visibility_m < 5000:
+        return 2
+    
+    elif visibility_m < 8000:
+        return 3
+    elif visibility_m < 10000:
+        return 4
+    else:
+        return 5
+
+def get_pressure_index(pressure_mmhg:float) -> int:
+    AVARAGE = 760
+    NORM_RANGE = 60
+
+    if   pressure_mmhg <  AVARAGE - NORM_RANGE / 2:
+        return 0
+    elif pressure_mmhg <= AVARAGE + NORM_RANGE / 2:
+        return 1
+    else:
+        return 2
 
 # CARDINAL POINTS
 

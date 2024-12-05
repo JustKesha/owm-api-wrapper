@@ -61,16 +61,23 @@ def get_weather_embed(location:Location, report:Weather) -> discord.Embed:
     
     # DETAILS FEILD
 
-    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Continue here...
-    # TODO Add .get_str to all the following elements (like was done with humidity below)
+    pressure_str = f'{report.pressure.name} {report.pressure.sea_level.mmhg.get_str()}'
+    
+    visibility_str = report.visibility.name
 
-    clouds_str = f'lots of clouds {report.clouds.get_str()}'
-    pressure_str = f'low pressure {report.pressure.ground_level.mbar.get_str()}'
-    visibility_str = f'great visibility {report.visibility.m.get_str()}'
+    if report.visibility.index != 5:
+        if report.visibility.m.get_value() > 1000:
+            visibility_str += f' {report.visibility.km.get_str()}'
+        else:
+            visibility_str += f' {report.visibility.m.get_str()}'
 
     embed.add_field(
         name = 'Details',
-        value = ', '.join([report.humidity.get_str().capitalize(), clouds_str, '\n' + pressure_str.capitalize(), visibility_str]) + '.',
+        value = ', '.join([
+            report.humidity.get_str().capitalize(),
+            report.clouds.get_str(),
+            '\n' + pressure_str.capitalize(),
+            visibility_str]) + '.',
         inline = False,
         )
 

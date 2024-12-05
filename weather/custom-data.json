@@ -1,0 +1,95 @@
+{
+    "wind": [
+        "calm",
+    
+        "light air",
+        "light breeze",
+        "gentle breeze",
+        "moderate breeze",
+        "fresh breeze",
+        "strong breeze",
+    
+        "moderate gale",
+        "fresh gale",
+        "strong gale",
+        "whole gale",
+    
+        "storm",
+    
+        "hurricane",
+        "hurricane",
+        "hurricane",
+        "hurricane",
+        "hurricane",
+        "hurricane"
+    ],
+
+    "cardinal_points": [
+        {
+            "short": "N",
+            "long": "North"
+        },
+        {
+            "short": "NE",
+            "long": "North-East"
+        },
+        {
+            "short": "E",
+            "long": "East"
+        },
+        {
+            "short": "SE",
+            "long": "South-East"
+        },
+        {
+            "short": "S",
+            "long": "South"
+        },
+        {
+            "short": "SW",
+            "long": "South-West"
+        },
+        {
+            "short": "W",
+            "long": "West"
+        },
+        {
+            "short": "NW",
+            "long": "North-West"
+        }
+    ],
+    
+    "humidity": [
+        "no humidity",
+
+        "low humidity",
+        "normal humidity",
+        "high humidity",
+
+        "absolute humidity"
+    ],
+    "cloudiness": [
+        "clear sky",
+
+        "low cloudiness",
+        "cloudiness",
+        "high cloudiness",
+
+        "completely covered by clouds"
+    ],
+    "visibility": [
+        "extremely poor visibility",
+        "poor visibility",
+
+        "visibility",
+
+        "good visibility",
+        "great visibility",
+        "perfect visibility"
+    ],
+    "pressure": [
+        "low pressure",
+        "pressure",
+        "high pressure"
+    ]
+}

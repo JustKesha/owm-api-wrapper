@@ -21,6 +21,8 @@ async def respond_with_error(
     return await ctx.respond(message, ephemeral=ephemeral)
 
 def get_weather_embed(location:Location, report:Weather) -> discord.Embed:
+    # STATIC ELEMENTS
+
     embed = discord.Embed(
         title = location.get_address_str(),
         url = location.get_google_maps_url(),
@@ -31,7 +33,11 @@ def get_weather_embed(location:Location, report:Weather) -> discord.Embed:
                 report.wind.name
                 ]) + '.\n'
     )
+    embed.set_thumbnail(url=report.default_icon_url)
     embed.set_author(name="Viewing current weather in,")
+    embed.set_footer(text=location.get_address_str(full=True))
+
+    # TEMEPERATURE
 
     embed.add_field(
         name = 'Temperature',
@@ -39,14 +45,17 @@ def get_weather_embed(location:Location, report:Weather) -> discord.Embed:
             ',\n'.join([
                 f'Current {report.temperature.actual.c.get_str()}',
                 f'Feels like {report.temperature.feels_like.c.get_str()}',
-                f'Ranging {report.temperature.min.c.get_str()} to {report.temperature.max.c.get_str()}',
+                f'Ranging from {report.temperature.min.c.get_str()} to {report.temperature.max.c.get_str()}',
                 ]) + '.',
         inline = True,
         )
     
-    # Adds some more space in between inline feields
+    # WHITE SPACE
+
     embed.add_field(name=' ', value=' ', inline=True)
     
+    # WIND
+
     embed.add_field(
         name = 'Wind',
         value =
@@ -54,38 +63,25 @@ def get_weather_embed(location:Location, report:Weather) -> discord.Embed:
                 f'Speed {report.wind.speed.ms.get_str()}',
                 f'Gusts up to {report.wind.gusts.ms.get_str()}',
                 f'Coming from {report.wind.cardinal_point.long}',
-                # f'Comin from {report.wind.cardinal_point.long} ({report.wind.cardinal_point.short}) {report.wind.degree.get_str()}',
                 ]) + '.',
         inline = True,
         )
     
-    # DETAILS FEILD
-
-    pressure_str = f'{report.pressure.name} {report.pressure.sea_level.mmhg.get_str()}'
-    
-    visibility_str = report.visibility.name
-
-    if report.visibility.index != 5:
-        if report.visibility.m.get_value() > 1000:
-            visibility_str += f' {report.visibility.km.get_str()}'
-        else:
-            visibility_str += f' {report.visibility.m.get_str()}'
+    # DETAILS
 
     embed.add_field(
         name = 'Details',
         value = ', '.join([
             report.humidity.get_str().capitalize(),
             report.clouds.get_str(),
-            '\n' + pressure_str.capitalize(),
-            visibility_str]) + '.',
+            '\n' + report.pressure.sea_level.get_str(report.pressure.sea_level.OUTPUT_MODES.MMHG).capitalize(),
+            report.visibility.get_str(report.visibility.OUTPUT_MODES.M_OR_KM)]) + '.',
         inline = False,
         )
 
-    embed.set_thumbnail(url=report.default_icon_url)
-    embed.set_footer(text=location.get_address_str(full=True))
-
     return embed
 
+# NOTE Might not be used atm
 def create_code_block(code:str, format:str='', cut:str='...', character_limit:int=2000) -> str:
     header = f'```{format}' + ('\n' if len(format) > 0 else '')
     footer = f'```'

@@ -4,6 +4,7 @@ import json
 import utils
 from utils import convert
 
+# TODO Would be nice to document some methods
 # NOTE Later on should be moved into some sort of translations module with getters
 
 CURRENT_PACKAGE_NAME = 'weather'
@@ -73,11 +74,34 @@ class TemperatureData():
         self.max = max
         self.feels_like = feels_like
 
+class PressuerOutputModes():
+    HPA = 0
+    MMHG = 1
+    MBAR = 2
+
 class Pressure():
+    OUTPUT_MODES = PressuerOutputModes
+
     def __init__(self, mbar:float=None) -> None:
         self.hpa = Value(mbar, 'hPa', 0)
         self.mmhg = Value(convert.mbar_to_mmhg(mbar), 'mmHg', 0)
         self.mbar = Value(mbar, 'Mbar', 0)
+
+        self.index = convert.get_pressure_index(self.mmhg.get_value())
+        self.name = custom_data['pressure'][self.index]
+    
+    def get_str(self, output_mode:int=PressuerOutputModes.MMHG, separator:str=None, accuracy:int=None) -> str:
+        output = self.name
+
+        match output_mode:
+            case PressuerOutputModes.MMHG:
+                output += ' ' + self.mmhg.get_str(separator=separator, accuracy=accuracy)
+            case PressuerOutputModes.HPA:
+                output += ' ' + self.hpa.get_str(separator=separator, accuracy=accuracy)
+            case PressuerOutputModes.MBAR:
+                output += ' ' + self.mbar.get_str(separator=separator, accuracy=accuracy)
+
+        return output
 
 class PressureData():
     def __init__(
@@ -88,9 +112,6 @@ class PressureData():
 
         self.sea_level = sea_level
         self.ground_level = ground_level
-
-        self.index = convert.get_pressure_index(self.ground_level.mmhg.get_value())
-        self.name = custom_data['pressure'][self.index]
 
 class Speed():
     def __init__(self, ms:float=0, accuracy:int=1) -> None:
@@ -138,7 +159,15 @@ class Timezone():
     def set_offset(self, ms:int=0) -> None:
         self.offset = ms
 
+class VisibilityOutputModes():
+    M = 0
+    KM = 1
+    MI = 2
+    M_OR_KM = 3
+
 class Visibility():
+    OUTPUT_MODES = VisibilityOutputModes
+
     def __init__(self, m:float) -> None:
         self.m = Value(m, 'm', 0)
         self.km = Value(m/1000, 'km', 1)
@@ -146,6 +175,30 @@ class Visibility():
 
         self.index = convert.get_visibility_index(self.m.get_value())
         self.name:str = custom_data['visibility'][self.index]
+    
+    def get_str(self, output_mode:int=VisibilityOutputModes.M_OR_KM, force_compelte:bool=False, separator:str=None, accuracy:int=None) -> str:
+        # NOTE force_compelte true makes it so the numeric value is always to be added, even if the name string is self descriptive
+
+        output = self.name
+    
+        if self.index == 5 and not force_compelte:
+            return output
+
+        output += ' '
+        match output_mode:
+            case VisibilityOutputModes.M:
+                output += self.m.get_str(separator=separator, accuracy=accuracy)
+            case VisibilityOutputModes.KM:
+                output += self.km.get_str(separator=separator, accuracy=accuracy)
+            case VisibilityOutputModes.MI:
+                output += self.mi.get_str(separator=separator, accuracy=accuracy)
+            case VisibilityOutputModes.M_OR_KM:
+                if self.m.get_value() > 1000:
+                    output += self.km.get_str()
+                else:
+                    output += self.m.get_str()
+
+        return output
 
 class Humidity():
     def __init__(self, humidity:int) -> None:

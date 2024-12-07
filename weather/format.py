@@ -38,12 +38,11 @@ class Value():
     def get_value(self, accuracy:int=None) -> float:
         if accuracy is None: accuracy = self.accuracy
 
+        # Python leaves a .0 at the end after doing round(x, 0)
         if accuracy == 0:
-            return int(self.value)
-
-        # FIXME Python leaves .0 to the end of numbers after round sometimes
-        # REMOVE THE ABOVE IF WHEN FIXED
-        return round(self.value, accuracy)
+            return round(self.value)
+        else:
+            return round(self.value, accuracy)
 
     def get_str(self, separator:str=None, accuracy:int=None) -> str:
         if separator is None: separator = self.separator

@@ -24,7 +24,7 @@
 
     "humidity": 83
   },
-  "visibility": 10000,
+  "visibility": 9000,
   "wind": {
     "speed": 1.25,
     "deg": 337,

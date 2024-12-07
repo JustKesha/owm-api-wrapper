@@ -14,7 +14,7 @@ with importlib.resources.open_text(CURRENT_PACKAGE_NAME, CUSTOM_DATA_FILE_NAME) 
     # TODO Внести в файл величины
     custom_data = json.load(file)
 
-# TODO Should rename to something like NumericValue
+# NOTE Should mention that this is strictly a numeric/float value and should probably be renamed to represent that better
 class Value():
     def __init__(self, value, unit:str, accuracy:int=2, separator:str=' ') -> None:
         self.set_value(value)
@@ -30,19 +30,20 @@ class Value():
         self.unit = unit
 
     def set_accuracy(self, accuracy:int):
-        self.accuracy = accuracy
+        self.output_accuracy = accuracy
 
     def set_separator(self, separator:str):
         self.separator = separator
 
-    def get_value(self, accuracy:int=None) -> float:
-        if accuracy is None: accuracy = self.accuracy
+    def get_value(self, accuracy:int=None, remove_trailing_zeros:bool=True) -> float:
+        if accuracy is None: accuracy = self.output_accuracy
 
-        # Python leaves a .0 at the end after doing round(x, 0)
-        if accuracy == 0:
-            return round(self.value)
-        else:
-            return round(self.value, accuracy)
+        output = round(self.value, accuracy)
+
+        if remove_trailing_zeros:
+            output = utils.remove_trailing_zeros(output)
+
+        return output
 
     def get_str(self, separator:str=None, accuracy:int=None) -> str:
         if separator is None: separator = self.separator

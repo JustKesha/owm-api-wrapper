@@ -20,7 +20,14 @@ async def respond_with_error(
 
     return await ctx.respond(message, ephemeral=ephemeral)
 
-def get_weather_embed(location:Location, report:Weather) -> discord.Embed:
+def get_weather_embed(location:Location, report:Weather, allow_simplification:bool=True) -> discord.Embed:
+    # NOTE When allow_simplification set to True it will hide some data which was found irrelevant using the following consts
+
+    SPEED_GUSTS_IGNORE_MARGIN_MS = 1.0
+
+    TEMP_FEELS_IGNORE_MARGIN_C = 1.0
+    TEMP_RANGE_IGNORE_MARGIN_C = 1.5
+
     # STATIC ELEMENTS
 
     embed = discord.Embed(
@@ -39,14 +46,26 @@ def get_weather_embed(location:Location, report:Weather) -> discord.Embed:
 
     # TEMEPERATURE
 
+    temperature_field_elements = [
+        f'Current {report.temperature.actual.c.get_str()}',
+    ]
+
+    temp_current_c = report.temperature.actual.c.get_value()
+    temp_feels_c = report.temperature.feels_like.c.get_value()
+
+    if abs(temp_current_c - temp_feels_c) >= TEMP_FEELS_IGNORE_MARGIN_C and allow_simplification:
+        temperature_field_elements.append(f'Feels like {report.temperature.feels_like.c.get_str(accuracy=0)}')
+    
+    temp_min_c = report.temperature.min.c.get_value()
+    temp_max_c = report.temperature.max.c.get_value()
+
+    if((abs(temp_current_c - temp_min_c) >= TEMP_RANGE_IGNORE_MARGIN_C or
+        abs(temp_current_c - temp_max_c) >= TEMP_RANGE_IGNORE_MARGIN_C) and allow_simplification):
+        temperature_field_elements.append(f'Ranging from {report.temperature.min.c.get_str()} to {report.temperature.max.c.get_str()}')
+    
     embed.add_field(
         name = 'Temperature',
-        value =
-            ',\n'.join([
-                f'Current {report.temperature.actual.c.get_str()}',
-                f'Feels like {report.temperature.feels_like.c.get_str()}',
-                f'Ranging from {report.temperature.min.c.get_str()} to {report.temperature.max.c.get_str()}',
-                ]) + '.',
+        value = ',\n'.join(temperature_field_elements) + '.',
         inline = True,
         )
     
@@ -56,14 +75,21 @@ def get_weather_embed(location:Location, report:Weather) -> discord.Embed:
     
     # WIND
 
+    wind_field_elements = [
+        f'Speed {report.wind.speed.ms.get_str()}',
+    ]
+
+    wind_speed_ms = report.wind.gusts.ms.get_value()
+    wind_gusts_ms = report.wind.gusts.ms.get_value()
+
+    if wind_gusts_ms - wind_speed_ms >= SPEED_GUSTS_IGNORE_MARGIN_MS and allow_simplification:
+        wind_field_elements.append(f'Gusts up to {report.wind.gusts.ms.get_str()}')
+    
+    wind_field_elements.append(f'Coming from {report.wind.cardinal_point.long}',)
+
     embed.add_field(
         name = 'Wind',
-        value =
-            ',\n'.join([
-                f'Speed {report.wind.speed.ms.get_str()}',
-                f'Gusts up to {report.wind.gusts.ms.get_str()}',
-                f'Coming from {report.wind.cardinal_point.long}',
-                ]) + '.',
+        value = ',\n'.join(wind_field_elements) + '.',
         inline = True,
         )
     

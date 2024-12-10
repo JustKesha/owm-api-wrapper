@@ -77,7 +77,6 @@ def knots_to_beaufort_scale_index(knots:float) -> int:
             return i
 
 # CUSTOM INDEXES
-# NOTE Should maybe be moved to weather module
 
 def get_humidity_index(humidity:int) -> int:
     if   humidity == 0:

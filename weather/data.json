@@ -1,0 +1,67 @@
+{
+    "colors_by_temperature": [
+        {
+            "max_c": -39,
+            "hex": "#7F7AE2"
+        },
+        {
+            "max_c": -33,
+            "hex": "#8689EC"
+        },
+        {
+            "max_c": -27,
+            "hex": "#8C94F3"
+        },
+
+        {
+            "max_c": -21,
+            "hex": "#93A3FD"
+        },
+        {
+            "max_c": -15,
+            "hex": "#A7BCFF"
+        },
+        {
+            "max_c": -9,
+            "hex": "#C1DAFF"
+        },
+
+        {
+            "max_c": -3,
+            "hex": "#DCEDFD"
+        },
+        {
+            "max_c": 3,
+            "hex": "#F8F8F9"
+        },
+        {
+            "max_c": 9,
+            "hex": "#FCEDBB"
+        },
+
+        {
+            "max_c": 15,
+            "hex": "#FFDC89"
+        },
+        {
+            "max_c": 21,
+            "hex": "#FFC689"
+        },
+        {
+            "max_c": 27,
+            "hex": "#FFB189"
+        },
+
+        {
+            "max_c": 33,
+            "hex": "#FFA286"
+        },
+        {
+            "max_c": 39,
+            "hex": "#FF9283"
+        },
+        {
+            "hex": "#FF8280"
+        }
+    ]
+}

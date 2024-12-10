@@ -33,6 +33,7 @@ def get_weather_embed(location:Location, report:Weather, allow_simplification:bo
     embed = discord.Embed(
         title = location.get_address_str(),
         url = location.get_google_maps_url(),
+        color = report.color.dex,
         description =
             ', '.join([
                 report.title,
@@ -116,5 +117,5 @@ def create_code_block(code:str, format:str='', cut:str='...', character_limit:in
 
     if len(code) > character_limit:
         code = code[:character_limit - len(cut)] + cut
-
+    
     return header + code + footer

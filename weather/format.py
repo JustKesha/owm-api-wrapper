@@ -1,19 +1,7 @@
-import importlib.resources
-import json
-
 import utils
 from utils import convert
-
-# TODO Would be nice to document some methods
-# NOTE Later on should be moved into some sort of translations module with getters
-
-CURRENT_PACKAGE_NAME = 'weather'
-CUSTOM_DATA_FILE_NAME = 'custom-data.json'
-
-with importlib.resources.open_text(CURRENT_PACKAGE_NAME, CUSTOM_DATA_FILE_NAME) as file:
-    # Getting type hints off of it would be nice
-    # TODO Внести в файл величины
-    custom_data = json.load(file)
+from . import globals
+from . import color
 
 # NOTE Should mention that this is strictly a numeric/float value and should probably be renamed to represent that better
 class Value():
@@ -88,7 +76,7 @@ class Pressure():
         self.mbar = Value(mbar, 'Mbar', 0)
 
         self.index = convert.get_pressure_index(self.mmhg.get_value())
-        self.name = custom_data['pressure'][self.index]
+        self.name = globals.ENGLISH['pressure'][self.index]
     
     def get_str(self, output_mode:int=PressuerOutputModes.MMHG, separator:str=None, accuracy:int=None) -> str:
         output = self.name
@@ -134,7 +122,7 @@ class Speed():
 class CardinalPoint():
     def __init__(self, degree:float) -> None:
 
-        cardinal_point = custom_data['cardinal_points'][convert.degree_to_cardinal_point_id(degree)]
+        cardinal_point = globals.ENGLISH['cardinal_points'][convert.degree_to_cardinal_point_id(degree)]
 
         self.short:str = cardinal_point['short']
         self.long:str = cardinal_point['long']
@@ -145,7 +133,7 @@ class Wind():
         self.gusts = gusts
 
         self.beaufort_scale = utils.clamp(convert.knots_to_beaufort_scale_index(speed.knots.value), 0, 17)
-        self.name:str = custom_data['wind'][self.beaufort_scale]
+        self.name:str = globals.ENGLISH['wind'][self.beaufort_scale]
 
         self.degree = Value(degree, '°', 0, '')
         self.cardinal_point = CardinalPoint(degree)
@@ -174,7 +162,7 @@ class Visibility():
         self.mi = Value(convert.m_to_mi(m), 'miles', 3)
 
         self.index = convert.get_visibility_index(self.m.get_value())
-        self.name:str = custom_data['visibility'][self.index]
+        self.name:str = globals.ENGLISH['visibility'][self.index]
     
     def get_str(self, output_mode:int=VisibilityOutputModes.M_OR_KM, force_compelte:bool=False, separator:str=None, accuracy:int=None) -> str:
         # NOTE force_compelte true makes it so the numeric value is always to be added, even if the name string is self descriptive
@@ -205,7 +193,7 @@ class Humidity():
         self.percentage = Value(humidity, '%', 0, '')
         
         self.index = convert.get_humidity_index(humidity)
-        self.name:str = custom_data['humidity'][self.index]
+        self.name:str = globals.ENGLISH['humidity'][self.index]
     
     def get_str(self, separator:str=None, accuracy:int=None) -> str:
         output = self.name
@@ -220,7 +208,7 @@ class Cloudiness():
         self.percentage = Value(cloudiness, '%', 0, '')
         
         self.index = convert.get_cloudiness_index(cloudiness)
-        self.name:str = custom_data['cloudiness'][self.index]
+        self.name:str = globals.ENGLISH['cloudiness'][self.index]
     
     def get_str(self, separator:str=None, accuracy:int=None) -> str:
         output = self.name
@@ -229,6 +217,11 @@ class Cloudiness():
             output += f' {self.percentage.get_str(separator=separator, accuracy=accuracy)}'
         
         return output
+
+class Color():
+    def __init__(self, hex:str) -> None:
+        self.hex = hex
+        self.dex = convert.hex_to_dex(hex)
 
 class Weather():
     def __init__(
@@ -268,6 +261,8 @@ class Weather():
         self.sunrise = sunrise
         self.sunset = sunset
         self.timezone = timezone
+
+        self.color = Color(color.get_hex_by_temperature(self.temperature.feels_like.c.get_value()))
     
     # I believe it was used for testing
     # def get_str(self) -> str:

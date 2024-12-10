@@ -27,6 +27,11 @@ def ms_to_knots(ms:float) -> float:
 def m_to_mi(m:float) -> float:
     return m * 0.000621371
 
+# COLOR
+
+def hex_to_dex(hex:str) -> int:
+    return int(hex.replace('#', ''), 16)
+
 # WIND
 
 BEAUFORT_SCALE = [

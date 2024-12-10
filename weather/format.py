@@ -229,7 +229,7 @@ class Weather():
 
             title:str,
             description:str,
-            weather_code:str,
+            weather_code:int,
             default_icon_url:str,
 
             temperature:TemperatureData,
@@ -262,7 +262,10 @@ class Weather():
         self.sunset = sunset
         self.timezone = timezone
 
-        self.color = Color(color.get_hex_by_temperature(self.temperature.feels_like.c.get_value()))
+        self.color = Color(color.get_weather_hex(
+            weather_code = self.weather_code,
+            temp_c = self.temperature.feels_like.c.get_value(),
+        ))
     
     # I believe it was used for testing
     # def get_str(self) -> str:

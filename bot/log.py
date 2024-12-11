@@ -14,7 +14,7 @@ class Filters():
         MessageTypes.INTR,
     ]
 
-PREFIXES = {
+MESSAGE_PREFIXES = {
     MessageTypes.PROC: '/',
     MessageTypes.WARN: '!',
     MessageTypes.INTR: '-',
@@ -52,4 +52,4 @@ def log(message:str, type:int, ongoing:bool=False) -> None:
     if not active: return
     if allowed_message_types and not type in allowed_message_types: return
 
-    print(f'{PREFIXES[type]} {(name + name_separator) if name else ""}{message}{ongoing_postfix if ongoing else ""}')
+    print(f'{MESSAGE_PREFIXES[type]} {(name + name_separator) if name else ""}{message}{ongoing_postfix if ongoing else ""}')

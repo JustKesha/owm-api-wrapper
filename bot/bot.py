@@ -1,9 +1,10 @@
 import discord # py-cord
 
 from .log import log, MessageTypes
+import utils
 from utils import discord as discord_utils
 from geocode import get_location, Location
-from weather import get_weather, Weather
+from weather import get_weather, Weather, MeasurementSystems
 
 configurated = False
 bot:discord.Bot
@@ -54,12 +55,33 @@ def init():
 
     # APPLICATION COMMANDS
     # TODO Separate into files, look into py-cord cogs
+
     @bot.slash_command(
         name='weather',
         description='Request fresh weather data from the API.',
         guild_ids=test_guilds,
     )
-    async def _weather(ctx:discord.ApplicationContext, search:str):
+    async def _weather(
+        ctx:discord.ApplicationContext,
+        search:discord.Option(
+            str,
+            required=True,
+        ),
+        system:discord.Option(
+            int,
+            required=False,
+            choices=[
+                discord.OptionChoice(
+                    name='Metric (SI)',
+                    value=MeasurementSystems.METRIC,
+                ),
+                discord.OptionChoice(
+                    name='Imperial (U.S. Customary System)',
+                    value=MeasurementSystems.IMPERIAL,
+                ),
+            ],
+        )=MeasurementSystems.DEFAULT,
+    ):
         await ctx.response.defer(ephemeral=True)
 
         location:Location = get_location(search)
@@ -69,19 +91,25 @@ def init():
                 ctx,
                 error='Couldnt pinpoint the location.',
                 solution='Maybe try reformulating your query or swapping parts of your query?',
-                )
+            )
 
         try:
             report:Weather = await get_weather(lat=location.lat, lon=location.lon)
         except Exception as e:
-            print(e)
+            log(e, MessageTypes.WARN)
             return await discord_utils.respond_with_error(
                 ctx,
                 error='Couldnt load the weather report.',
                 solution='Maybe try again later?',
-                )
+            )
 
-        await ctx.send_followup(embed=discord_utils.get_weather_embed(location=location, report=report))
+        await ctx.send_followup(
+            embed=discord_utils.get_weather_embed(
+                location=location,
+                report=report,
+                system=system,
+            )
+        )
 
     @bot.slash_command(
         name='find',
@@ -98,7 +126,7 @@ def init():
                 ctx,
                 error='Couldnt find the location.',
                 solution='Maybe try reformulating your query or swapping parts of your query?',
-                )
+            )
 
         await ctx.send_followup(location.get_str())
 

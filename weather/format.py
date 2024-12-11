@@ -3,7 +3,16 @@ from utils import convert
 from . import globals
 from . import color
 
-# NOTE Should mention that this is strictly a numeric/float value and should probably be renamed to represent that better
+# TODO Should probably save all the accuracy values set below as consts
+
+class MeasurementSystems():
+    METRIC = 0
+    IMPERIAL = 1
+
+    DEFAULT = METRIC
+    VALUES = [METRIC, IMPERIAL]
+
+# NOTE Worth mentioning that this is strictly a numeric/float value and should probably be renamed to represent that better
 class Value():
     def __init__(self, value, unit:str, accuracy:int=2, separator:str=' ') -> None:
         self.set_value(value)
@@ -47,7 +56,22 @@ class Temperature():
         self.c = Value(convert.k_to_c(k), '°C', 1)
         self.f = Value(convert.k_to_f(k), '°F', 1)
         self.k = Value(k, 'K', 0)
-
+    
+    def get_str(
+            self,
+            system:int=MeasurementSystems.DEFAULT,
+            separator:str=None,
+            accuracy:int=None,
+        ):
+        if not system in MeasurementSystems.VALUES:
+            system = MeasurementSystems.DEFAULT
+        
+        match system:
+            case MeasurementSystems.METRIC:
+                return self.c.get_str(separator=separator, accuracy=accuracy)
+            case MeasurementSystems.IMPERIAL:
+                return self.f.get_str(separator=separator, accuracy=accuracy)
+            
 class TemperatureData():
     def __init__(
             self,
@@ -62,14 +86,7 @@ class TemperatureData():
         self.max = max
         self.feels_like = feels_like
 
-class PressuerOutputModes():
-    HPA = 0
-    MMHG = 1
-    MBAR = 2
-
 class Pressure():
-    OUTPUT_MODES = PressuerOutputModes
-
     def __init__(self, mbar:float=None) -> None:
         self.hpa = Value(mbar, 'hPa', 0)
         self.mmhg = Value(convert.mbar_to_mmhg(mbar), 'mmHg', 0)
@@ -78,16 +95,24 @@ class Pressure():
         self.index = convert.get_pressure_index(self.mmhg.get_value())
         self.name = globals.ENGLISH['pressure'][self.index]
     
-    def get_str(self, output_mode:int=PressuerOutputModes.MMHG, separator:str=None, accuracy:int=None) -> str:
+    def get_str(
+            self,
+            system:int=MeasurementSystems.DEFAULT,
+            separator:str=None,
+            accuracy:int=None
+        ) -> str:
+
+        if not system in MeasurementSystems.VALUES:
+            system = MeasurementSystems.DEFAULT
+
         output = self.name
 
-        match output_mode:
-            case PressuerOutputModes.MMHG:
-                output += ' ' + self.mmhg.get_str(separator=separator, accuracy=accuracy)
-            case PressuerOutputModes.HPA:
-                output += ' ' + self.hpa.get_str(separator=separator, accuracy=accuracy)
-            case PressuerOutputModes.MBAR:
-                output += ' ' + self.mbar.get_str(separator=separator, accuracy=accuracy)
+        output += ' '
+        match system:
+            case MeasurementSystems.METRIC:
+                output += self.mmhg.get_str(separator=separator, accuracy=accuracy)
+            case MeasurementSystems.IMPERIAL:
+                output += self.mbar.get_str(separator=separator, accuracy=accuracy)
 
         return output
 
@@ -109,7 +134,7 @@ class Speed():
         self.set_accuracy(accuracy)
     
     def set_accuracy(self, accuracy:int):
-        self.accuracy = accuracy
+        self.accuracy = accuracy # is it even used?
 
         self.set_ms(self.ms)
 
@@ -118,6 +143,21 @@ class Speed():
         self.kph = Value(convert.ms_to_kph(ms), 'kph', 1)
         self.mph = Value(convert.ms_to_mph(ms), 'mph', 0)
         self.knots = Value(convert.ms_to_knots(ms), 'knots', 0)
+    
+    def get_str(
+            self,
+            system:int=MeasurementSystems.DEFAULT,
+            separator:str=None,
+            accuracy:int=None,
+        ):
+        if not system in MeasurementSystems.VALUES:
+            system = MeasurementSystems.DEFAULT
+        
+        match system:
+            case MeasurementSystems.METRIC:
+                return self.ms.get_str(separator=separator, accuracy=accuracy)
+            case MeasurementSystems.IMPERIAL:
+                return self.mph.get_str(separator=separator, accuracy=accuracy)
 
 class CardinalPoint():
     def __init__(self, degree:float) -> None:
@@ -147,25 +187,26 @@ class Timezone():
     def set_offset(self, ms:int=0) -> None:
         self.offset = ms
 
-class VisibilityOutputModes():
-    M = 0
-    KM = 1
-    MI = 2
-    M_OR_KM = 3
-
 class Visibility():
-    OUTPUT_MODES = VisibilityOutputModes
-
     def __init__(self, m:float) -> None:
         self.m = Value(m, 'm', 0)
         self.km = Value(m/1000, 'km', 1)
-        self.mi = Value(convert.m_to_mi(m), 'miles', 3)
+        self.mi = Value(convert.m_to_mi(m), 'miles', 2)
 
         self.index = convert.get_visibility_index(self.m.get_value())
         self.name:str = globals.ENGLISH['visibility'][self.index]
     
-    def get_str(self, output_mode:int=VisibilityOutputModes.M_OR_KM, force_compelte:bool=False, separator:str=None, accuracy:int=None) -> str:
+    def get_str(
+            self,
+            system:int=MeasurementSystems.DEFAULT,
+            force_compelte:bool=False,
+            separator:str=None,
+            accuracy:int=None
+    ) -> str:
         # NOTE force_compelte true makes it so the numeric value is always to be added, even if the name string is self descriptive
+        
+        if not system in MeasurementSystems.VALUES:
+            system = MeasurementSystems.DEFAULT
 
         output = self.name
     
@@ -173,18 +214,14 @@ class Visibility():
             return output
 
         output += ' '
-        match output_mode:
-            case VisibilityOutputModes.M:
-                output += self.m.get_str(separator=separator, accuracy=accuracy)
-            case VisibilityOutputModes.KM:
-                output += self.km.get_str(separator=separator, accuracy=accuracy)
-            case VisibilityOutputModes.MI:
-                output += self.mi.get_str(separator=separator, accuracy=accuracy)
-            case VisibilityOutputModes.M_OR_KM:
+        match system:
+            case MeasurementSystems.METRIC:
                 if self.m.get_value() > 1000:
                     output += self.km.get_str()
                 else:
                     output += self.m.get_str()
+            case MeasurementSystems.IMPERIAL:
+                output += self.mi.get_str(separator=separator, accuracy=accuracy)
 
         return output
 
@@ -266,10 +303,6 @@ class Weather():
             weather_code = self.weather_code,
             temp_c = self.temperature.feels_like.c.get_value(),
         ))
-    
-    # I believe it was used for testing
-    # def get_str(self) -> str:
-    #     return f'{self.title}, {self.description}. {self.temperature.actual.c.get_str()}, {self.wind.speed.ms.get_str()}.'
 
 def format_data(raw_data:dict) -> Weather:
     # Not partly raw, but medium rare

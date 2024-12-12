@@ -36,15 +36,20 @@ def get_weather_embed(
 
     # STATIC ELEMENTS
 
+    description_elements = [
+        report.title.capitalize(),
+    ]
+
+    if report.title != report.description:
+        description_elements.append(report.description)
+
+    description_elements.append(report.wind.name)
+
     embed = discord.Embed(
         title = location.get_address_str(),
         url = location.get_google_maps_url(),
         color = report.color.dex,
-        description = ', '.join([
-                report.title,
-                report.description,
-                report.wind.name
-            ]) + '.\n'
+        description = ', '.join(description_elements) + '.\n',
     )
     embed.set_thumbnail(url=report.default_icon_url)
     embed.set_author(name='Viewing current weather in,')
@@ -93,14 +98,9 @@ def get_weather_embed(
     
     # WIND
 
-    wind_field_elements = []
     wind_speed_ms = report.wind.speed.ms.get_value()
 
-    if wind_speed_ms <= SPEED_WIND_INGORE_MS and allow_simplification:
-        wind_field_elements = [
-            'None'
-        ]
-    else:
+    if wind_speed_ms > SPEED_WIND_INGORE_MS or not allow_simplification:
         wind_field_elements = [
             f'Speed {report.wind.speed.get_str(system=system)}',
         ]
@@ -112,10 +112,10 @@ def get_weather_embed(
         
         wind_field_elements.append(f'Coming from {report.wind.cardinal_point.long}',)
 
-    embed.add_field(
-        name = 'Wind',
-        value = ',\n'.join(wind_field_elements) + '.',
-        inline = True,
+        embed.add_field(
+            name = 'Wind',
+            value = ',\n'.join(wind_field_elements) + '.',
+            inline = True,
         )
     
     # DETAILS

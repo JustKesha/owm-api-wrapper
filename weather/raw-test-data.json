@@ -5,9 +5,9 @@
   },
   "weather": [
     {
-      "id": 803,
-      "main": "Clouds",
-      "description": "broken clouds",
+      "id": 212,
+      "main": "Thunderstorm",
+      "description": "extreme rain",
       "icon": "04n" 
     }
   ],

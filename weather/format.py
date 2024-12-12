@@ -282,7 +282,7 @@ class Weather():
             timezone:Timezone,
         ) -> None:
 
-        self.title = title
+        self.title = title.lower()
         self.description = description
         self.weather_code = weather_code
         self.default_icon_url = default_icon_url
@@ -305,7 +305,6 @@ class Weather():
         ))
 
 def format_data(raw_data:dict) -> Weather:
-    # Not partly raw, but medium rare
     return Weather(
         title = raw_data['weather'][0]['main'],
         description = raw_data['weather'][0]['description'],
@@ -330,7 +329,7 @@ def format_data(raw_data:dict) -> Weather:
             ground_level = Pressure(raw_data['main']['grnd_level']),
         ),
         clouds = Cloudiness(raw_data['clouds']['all']),
-        visibility = Visibility(raw_data['visibility']),
+        visibility = Visibility(raw_data['visibility'] if 'visibility' in raw_data else 10000),
 
         sunrise = raw_data['sys']['sunrise'],
         sunset = raw_data['sys']['sunset'],

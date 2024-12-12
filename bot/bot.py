@@ -1,7 +1,7 @@
 import discord # py-cord
 
 from .log import log, MessageTypes
-import utils
+from utils import convert
 from utils import discord as discord_utils
 from geocode import get_location, Location
 from weather import get_weather, Weather, MeasurementSystems
@@ -80,7 +80,7 @@ def init():
                     value=MeasurementSystems.IMPERIAL,
                 ),
             ],
-        )=MeasurementSystems.DEFAULT,
+        )=None,
     ):
         await ctx.response.defer(ephemeral=True)
 
@@ -102,6 +102,9 @@ def init():
                 error='Couldnt load the weather report.',
                 solution='Maybe try again later?',
             )
+
+        if system is None:
+            system = convert.get_measurement_system_index_by_country_code(location.country_code)
 
         await ctx.send_followup(
             embed=discord_utils.get_weather_embed(

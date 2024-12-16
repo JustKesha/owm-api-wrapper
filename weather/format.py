@@ -4,6 +4,7 @@ from . import globals
 from . import color
 
 # TODO Should probably save all the accuracy values set below as consts
+# TODO Docstrings
 
 class MeasurementSystems():
     METRIC = 0
@@ -24,7 +25,7 @@ class Value():
         self.value = value
 
     def set_unit(self, unit:str):
-        # TODO Short / long versions ?
+        # TODO Could be divided by short & long versions
         self.unit = unit
 
     def set_accuracy(self, accuracy:int):
@@ -117,30 +118,13 @@ class Pressure():
         return output
 
 class PressureData():
-    def __init__(
-            self,
-            sea_level:Pressure,
-            ground_level:Pressure,
-        ) -> None:
+    def __init__(self, sea_level:Pressure, ground_level:Pressure) -> None:
 
         self.sea_level = sea_level
         self.ground_level = ground_level
 
 class Speed():
-    def __init__(self, ms:float=0, accuracy:int=1) -> None:
-        
-        self.ms = ms
-
-        self.set_accuracy(accuracy)
-    
-    def set_accuracy(self, accuracy:int):
-        self.accuracy = accuracy # FIXME Is this even used?
-
-        self.set_ms(self.ms)
-
-    # TODO Should add such setters to the rest of the classes
-    # Or predent like it was never here, bc im not gonna use them anyway
-    def set_ms(self, ms:float):
+    def __init__(self, ms:float=0) -> None:
         self.ms = Value(ms, 'ms', 1)
         self.kph = Value(convert.ms_to_kph(ms), 'kph', 1)
         self.mph = Value(convert.ms_to_mph(ms), 'mph', 0)

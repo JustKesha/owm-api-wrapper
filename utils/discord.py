@@ -24,7 +24,6 @@ class TimestampFormats(Enum):
     DATE_AND_TIME_LONG = 'F'
     RELATIVE = 'R'
 
-
 # TODO Replace with get error str
 async def respond_with_error(
         ctx:discord.ApplicationContext,

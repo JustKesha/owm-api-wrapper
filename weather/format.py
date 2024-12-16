@@ -134,10 +134,12 @@ class Speed():
         self.set_accuracy(accuracy)
     
     def set_accuracy(self, accuracy:int):
-        self.accuracy = accuracy # is it even used?
+        self.accuracy = accuracy # FIXME Is this even used?
 
         self.set_ms(self.ms)
 
+    # TODO Should add such setters to the rest of the classes
+    # Or predent like it was never here, bc im not gonna use them anyway
     def set_ms(self, ms:float):
         self.ms = Value(ms, 'ms', 1)
         self.kph = Value(convert.ms_to_kph(ms), 'kph', 1)
@@ -178,14 +180,13 @@ class Wind():
         self.degree = Value(degree, '°', 0, '')
         self.cardinal_point = CardinalPoint(degree)
 
-class Timezone():
-    def __init__(self, offset_ms:int=0) -> None:
-        self.set_offset(offset_ms)
-    
-    # TODO Should add such setters to the rest of the classes
-    # Or predent like it was never here, bc im not gonna use them anyway
-    def set_offset(self, ms:int=0) -> None:
-        self.offset = ms
+class Time():
+    def __init__(self, offset:int, sunrise:int, sunset:int) -> None:
+        self.offset = offset
+        self.sunrise = sunrise
+        self.is_past_sunrise:bool = utils.is_it_past_time(sunrise, offset)
+        self.sunset = sunset
+        self.is_past_sunset:bool = utils.is_it_past_time(sunset, offset)
 
 class Visibility():
     def __init__(self, m:float) -> None:
@@ -277,9 +278,7 @@ class Weather():
             clouds:Cloudiness,
             visibility:Visibility,
 
-            sunrise:int,
-            sunset:int,
-            timezone:Timezone,
+            time:Time,
         ) -> None:
 
         self.title = title.lower()
@@ -295,9 +294,7 @@ class Weather():
         self.clouds = clouds
         self.visibility = visibility
 
-        self.sunrise = sunrise
-        self.sunset = sunset
-        self.timezone = timezone
+        self.time = time
 
         self.color = Color(color.get_weather_hex(
             weather_code = self.weather_code,
@@ -331,7 +328,9 @@ def format_data(raw_data:dict) -> Weather:
         clouds = Cloudiness(raw_data['clouds']['all']),
         visibility = Visibility(raw_data['visibility'] if 'visibility' in raw_data else 10000),
 
-        sunrise = raw_data['sys']['sunrise'],
-        sunset = raw_data['sys']['sunset'],
-        timezone = Timezone(raw_data['timezone']),
+        time = Time(
+            offset = raw_data['timezone'],
+            sunrise = raw_data['sys']['sunrise'],
+            sunset = raw_data['sys']['sunset'],
+        )
     )

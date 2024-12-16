@@ -1,4 +1,8 @@
+from enum import Enum
+
 import discord
+
+from utils import upcase_first_char
 from geocode import Location
 from weather import Weather, MeasurementSystems
 
@@ -11,6 +15,17 @@ SPEED_GUSTS_IGNORE_MARGIN_MS = 2.5
 TEMP_FEELS_IGNORE_MARGIN_C = 1.0
 TEMP_RANGE_IGNORE_MARGIN_C = 1.5
 
+class TimestampFormats(Enum):
+    DATE = 'd'
+    DATE_LONG = 'D'
+    TIME = 't'
+    TIME_LONG = 'T'
+    DATE_AND_TIME = 'f'
+    DATE_AND_TIME_LONG = 'F'
+    RELATIVE = 'R'
+
+
+# TODO Replace with get error str
 async def respond_with_error(
         ctx:discord.ApplicationContext,
         error='Looks like something went wrong.',
@@ -18,6 +33,7 @@ async def respond_with_error(
         reaction='Whoops',
         ephemeral=True
     ):
+    # TODO Add a return value type hint
 
     if len(error) > 0:
         error += '\n'
@@ -25,6 +41,9 @@ async def respond_with_error(
     message = f'{reaction},\n\n{error}{solution}'
 
     return await ctx.respond(message, ephemeral=ephemeral)
+
+def get_timestamp(time:int, format:TimestampFormats=TimestampFormats.DATE_AND_TIME_LONG) -> str:
+    return f'<t:{time}:{format.value}>'
 
 def get_weather_embed(
         location:Location,
@@ -79,7 +98,8 @@ def get_weather_embed(
     temp_max_c = report.temperature.max.c.get_value()
 
     if((abs(temp_current_c - temp_min_c) >= TEMP_RANGE_IGNORE_MARGIN_C or
-        abs(temp_current_c - temp_max_c) >= TEMP_RANGE_IGNORE_MARGIN_C) or not allow_simplification):
+        abs(temp_current_c - temp_max_c) >= TEMP_RANGE_IGNORE_MARGIN_C) or
+        not allow_simplification):
 
         temp_min = report.temperature.min.get_str(system=system)
         temp_max = report.temperature.max.get_str(system=system)
@@ -120,26 +140,21 @@ def get_weather_embed(
     
     # DETAILS
 
+    sunrise_timestamp = get_timestamp(report.time.sunrise, TimestampFormats.RELATIVE)
+    sunset_timestamp = get_timestamp(report.time.sunset, TimestampFormats.RELATIVE)
+
+    daylight_hours_str= f'Sunrise {sunrise_timestamp}, sunset {sunset_timestamp}.'
+
     embed.add_field(
         name = 'Details',
-        value = ', '.join([
-            report.humidity.get_str().capitalize(),
+        value = daylight_hours_str + ', '.join([
+            '\n' + upcase_first_char(report.humidity.get_str()),
             report.clouds.get_str(),
-            '\n' + report.pressure.sea_level.get_str(system=system).capitalize(),
-            report.visibility.get_str(system=system)]) + '.',
+
+            '\n' + upcase_first_char(report.pressure.sea_level.get_str(system=system)),
+            report.visibility.get_str(system=system),
+            ]) + '.',
         inline = False,
         )
 
     return embed
-
-# NOTE Not used atm
-def create_code_block(code:str, format:str='', cut:str='...', character_limit:int=2000) -> str:
-    header = f'```{format}' + ('\n' if len(format) > 0 else '')
-    footer = f'```'
-
-    character_limit -= len(''.join([header, footer]))
-
-    if len(code) > character_limit:
-        code = code[:character_limit - len(cut)] + cut
-    
-    return header + code + footer

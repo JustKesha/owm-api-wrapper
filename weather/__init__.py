@@ -5,3 +5,4 @@ from .format import (
     Pressure, PressureData, Speed, CardinalPoint, Wind, Time,
     Visibility, Humidity, Cloudiness, Weather
     )
+from .icons import IconSets, update_icon_sets_data

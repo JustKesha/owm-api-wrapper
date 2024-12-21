@@ -106,12 +106,22 @@ def init():
         if system is None:
             system = convert.get_measurement_system_index_by_country_code(location.country_code)
 
+        files = []
+        thumbnail_attachment = ''
+        icon_bytes_io = report.get_icon()
+
+        if icon_bytes_io:
+            thumbnail_attachment = 'icon.png'
+            files.append(discord.File(icon_bytes_io, thumbnail_attachment))
+
         await ctx.send_followup(
+            files=files,
             embed=discord_utils.get_weather_embed(
                 location=location,
                 report=report,
                 system=system,
-            )
+                thumbnail_attachment=thumbnail_attachment
+            ),
         )
 
     @bot.slash_command(

@@ -1,10 +1,12 @@
+from io import BytesIO
+
 import utils
 from utils import convert
 from . import globals
-from . import color
+from .colors import Color
+from .icons import get_icon_bytes_io
 
 # TODO Should probably save all the accuracy values set below as consts
-# TODO Docstrings
 
 class MeasurementSystems():
     METRIC = 0
@@ -89,9 +91,9 @@ class TemperatureData():
 
 class Pressure():
     def __init__(self, mbar:float=None) -> None:
-        self.hpa = Value(mbar, 'hPa', 0)
-        self.mmhg = Value(convert.mbar_to_mmhg(mbar), 'mmHg', 0)
-        self.mbar = Value(mbar, 'Mbar', 0)
+        self.hpa = Value(mbar, 'hpa', 0)
+        self.mmhg = Value(convert.mbar_to_mmhg(mbar), 'mmhg', 0)
+        self.mbar = Value(mbar, 'mbar', 0)
 
         self.index = convert.get_pressure_index(self.mmhg.get_value())
         self.name = globals.ENGLISH['pressure'][self.index]
@@ -240,11 +242,6 @@ class Cloudiness():
         
         return output
 
-class Color():
-    def __init__(self, hex:str) -> None:
-        self.hex = hex
-        self.dex = convert.hex_to_dex(hex)
-
 class Weather():
     def __init__(
             self,
@@ -263,9 +260,11 @@ class Weather():
             visibility:Visibility,
 
             time:Time,
+
+            color:Color=None,
         ) -> None:
 
-        self.title = title.lower()
+        self.title = title
         self.description = description
         self.weather_code = weather_code
         self.default_icon_url = default_icon_url
@@ -280,14 +279,22 @@ class Weather():
 
         self.time = time
 
-        self.color = Color(color.get_weather_hex(
-            weather_code = self.weather_code,
-            temp_c = self.temperature.feels_like.c.get_value(),
-        ))
+        if color is None:
+            self.color = Color(
+                weather_code = self.weather_code,
+                temp_c = self.temperature.feels_like.c.get_value()
+            )
+        else:
+            self.color = color
+    
+    def get_icon(self) -> BytesIO:
+        return get_icon_bytes_io(str(self.weather_code))
 
 def format_data(raw_data:dict) -> Weather:
+    title:str = raw_data['weather'][0]['main']
+
     return Weather(
-        title = raw_data['weather'][0]['main'],
+        title = title.lower(),
         description = raw_data['weather'][0]['description'],
 
         temperature = TemperatureData(

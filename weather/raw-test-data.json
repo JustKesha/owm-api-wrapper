@@ -1,49 +1,46 @@
 {
   "coord": {
-    "lon": 50.15,
-    "lat": 53.2001
+    "lon": 50.2039,
+    "lat": 53.2195
   },
   "weather": [
     {
-      "id": 212,
-      "main": "Thunderstorm",
-      "description": "extreme rain",
-      "icon": "04n" 
+      "id": 600,
+      "main": "Snow",
+      "description": "light snow",
+      "icon": "13n"
     }
   ],
   "base": "stations",
   "main": {
-    "temp": 270.2,
-    "feels_like": 270.2,
-    "temp_min": 270.2,
-    "temp_max": 270.2,
-
-    "pressure": 1033,
-    "sea_level": 1033,
-    "grnd_level": 1022,
-
-    "humidity": 83
+    "temp": 270.99,
+    "feels_like": 265.15,
+    "temp_min": 270.99,
+    "temp_max": 270.99,
+    "pressure": 1001,
+    "humidity": 93,
+    "sea_level": 1001,
+    "grnd_level": 991
   },
-  "visibility": 9000,
+  "visibility": 4364,
   "wind": {
-    "speed": 1.25,
-    "deg": 337,
-    "gust": 2.19
+    "speed": 5.64,
+    "deg": 238,
+    "gust": 11.01
+  },
+  "snow": {
+    "1h": 0.1
   },
   "clouds": {
-    "all": 55
+    "all": 100
   },
-
-  "dt": 1731373008,
+  "dt": 1734366180,
   "sys": {
-    "type": 1,
-    "id": 9051,
     "country": "RU",
-    "sunrise": 1731383923,
-    "sunset": 1731415715
+    "sunrise": 1734324513,
+    "sunset": 1734351681
   },
   "timezone": 14400,
-  
   "id": 499099,
   "name": "Samara",
   "cod": 200

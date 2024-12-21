@@ -1,9 +1,11 @@
-import importlib
+from importlib import resources
 import json
 
 PACKAGE_NAME = 'weather'
+DATA_FILE_NAME = 'data.json'
+ENGLISH_FILE_NAME = 'english.json'
 
-with importlib.resources.open_text(PACKAGE_NAME, 'data.json') as file:
+with resources.open_text(PACKAGE_NAME, DATA_FILE_NAME) as file:
     """
     colors_by_temperature
 
@@ -19,6 +21,6 @@ with importlib.resources.open_text(PACKAGE_NAME, 'data.json') as file:
     """
     DATA = json.load(file)
 
-with importlib.resources.open_text(PACKAGE_NAME, 'english.json') as file:
+with resources.open_text(PACKAGE_NAME, ENGLISH_FILE_NAME) as file:
     # TODO Внести в файл величины
     ENGLISH = json.load(file)

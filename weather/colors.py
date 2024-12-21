@@ -1,3 +1,4 @@
+from utils import convert
 from . import globals
 
 DEFAULT_HEX_BY_CONDITION_OUTPUT = '#313338'
@@ -24,3 +25,11 @@ def get_weather_hex(weather_code:int, temp_c:float):
         return get_hex_by_condition(weather_code)
     
     return get_hex_by_temperature(temp_c)
+
+class Color():
+    def __init__(self, weather_code:int, temp_c:float) -> None:
+        self.hex = get_weather_hex(
+            weather_code = weather_code,
+            temp_c = temp_c,
+            )
+        self.dex = convert.hex_to_dex(self.hex)

@@ -49,10 +49,11 @@ def get_weather_embed(
         report:Weather,
         system:int=MeasurementSystems.METRIC,
         allow_simplification:bool=True,
+        thumbnail_attachment:str=''
     ) -> discord.Embed:
     # NOTE When allow_simplification set to True some data (which was found irrelevant using the relevant consts) will be hidden
 
-    # STATIC ELEMENTS
+    # GENERAL
 
     description_elements = [
         report.title.capitalize(),
@@ -69,9 +70,17 @@ def get_weather_embed(
         color = report.color.dex,
         description = ', '.join(description_elements) + '.\n',
     )
-    embed.set_thumbnail(url=report.default_icon_url)
     embed.set_author(name='Viewing current weather in,')
     embed.set_footer(text=location.get_address_str(full=True))
+
+    # THUMBNAIL
+
+    thumbnail_url = report.default_icon_url
+
+    if thumbnail_attachment:
+        thumbnail_url = 'attachment://' + thumbnail_attachment
+
+    embed.set_thumbnail(url=thumbnail_url)
 
     # TEMEPERATURE
 

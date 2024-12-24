@@ -4,7 +4,7 @@ import utils
 from utils import convert
 from . import globals
 from .colors import Color
-from .icons import get_icon_bytes_io
+from .icons import IconSets, get_icon_bytes_io
 
 # TODO Should probably save all the accuracy values set below as consts
 
@@ -287,8 +287,30 @@ class Weather():
         else:
             self.color = color
     
-    def get_icon(self) -> BytesIO:
-        return get_icon_bytes_io(str(self.weather_code))
+    def get_icon_name(self) -> str:
+        return str(self.weather_code)
+
+    def get_icon_index(self) -> int:
+        return 0 if self.time.is_past_sunrise and not self.time.is_past_sunset else 1
+
+    def get_icon(
+            self,
+            icon_set:IconSets=IconSets.DEFAULT,
+            
+            retry_default_set:bool=True,
+            retry_lower_index:bool=True,
+            ) -> BytesIO:
+        icon_name = self.get_icon_name()
+        icon_index = self.get_icon_index()
+
+        return get_icon_bytes_io(
+            icon_name,
+            icon_index,
+            icon_set,
+            
+            retry_default_set=retry_default_set,
+            retry_lower_index=retry_lower_index,
+            )
 
 def format_data(raw_data:dict) -> Weather:
     title:str = raw_data['weather'][0]['main']

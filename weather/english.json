@@ -63,13 +63,13 @@
         "no humidity",
 
         "low humidity",
-        "normal humidity",
+        "humidity",
         "high humidity",
 
         "absolute humidity"
     ],
     "cloudiness": [
-        "clear sky",
+        "no clouds",
 
         "low cloudiness",
         "cloudiness",

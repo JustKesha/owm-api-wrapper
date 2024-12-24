@@ -11,12 +11,10 @@ ICON_SET_INDEX_FILE_NAME = 'index.json'
 
 # NOTE Dont forget to update this when changing icon sets list
 class IconSets(Enum):
-    # Values should be the names of icon set directories
-    Paint = 'paint'
+    # Values must be names of icon set directories
+    Microsoft3D = 'microsoft'
 
-    DEFAULT = Paint
-
-# Working with icon sets data
+    DEFAULT = Microsoft3D
 
 icon_sets_data = {}
 
@@ -26,8 +24,6 @@ def get_icon_set_path(icon_set:IconSets, separator:str='/'):
         icon_set.value,
     ])
 
-# FIXME Im not sure its a good practice
-# What if intead itd take a str or IconSets / str
 def get_icon_set_data(icon_set:IconSets) -> dict:
     # Returns data from the index file of chosen icon set as dict
     # Can raise the same errors as importlib.resources.open_text, json.load
@@ -67,36 +63,60 @@ def update_icon_sets_data() -> None:
 
     icon_sets_data = get_icon_sets_data()
 
-update_icon_sets_data()
 
-# Working with icon files
+def is_icon_in_set(
+        icon_set:IconSets,
+        icon_name:str,
+        icon_index:int=0
+        ) -> bool:
+    
+    icon_set_data:dict = icon_sets_data[icon_set.value]
 
-def is_icon_in_set(icon_set:IconSets, icon_name:str) -> bool:
-    return icon_name in icon_sets_data[icon_set.value].keys()
+    if not icon_name in icon_set_data.keys():
+        return False
+    
+    return icon_index >= 0 and icon_index < len(icon_set_data[icon_name])
 
-def get_icon_file_name(icon_set:IconSets, icon_name:str) -> Union[str, None]:
-    if not is_icon_in_set(icon_set, icon_name):
+def get_icon_file_name(
+        icon_set:IconSets,
+        icon_name:str,
+        icon_index:int=0
+        ) -> Union[str, None]:
+    if not is_icon_in_set(icon_set, icon_name, icon_index):
         return None
     
-    return icon_sets_data[icon_set.value][icon_name]
+    return icon_sets_data[icon_set.value][icon_name][icon_index]
 
 def get_icon_bytes(
         icon_name:str,
+        icon_index:int=0,
         icon_set:IconSets=IconSets.DEFAULT,
-        retry_with_default:bool=True
+
+        retry_default_set:bool=True,
+        retry_lower_index:bool=True,
         ) -> Union[bytes, None]:
     # Returns byte data of the icon image file or None
-    # If retry_with_default true will rerun using the default set if icon wasnt found
-    
+    # If retry_default_set true will retry using the default set if icon wasnt found
+    # If retry_lower_index true will retry with a lower index if no icon with given index found
+
     if not is_icon_in_set(icon_set, icon_name):
-        if not icon_set is IconSets.DEFAULT and retry_with_default:
-            return get_icon_bytes(icon_name)
+        
+        if retry_default_set and not icon_set is IconSets.DEFAULT:
+            return get_icon_bytes(icon_name, icon_index)
+        else:
+            return None
+
+    if not is_icon_in_set(icon_set, icon_name, icon_index):
+        
+        if retry_lower_index:
+            icon_index = len(icon_sets_data[icon_set.value][icon_name]) - 1
         else:
             return None
     
+    
     path = '/'.join([
         get_icon_set_path(icon_set),
-        get_icon_file_name(icon_set, icon_name),
+        get_icon_file_name(icon_set, icon_name, icon_index),
     ])
 
     try:
@@ -106,12 +126,22 @@ def get_icon_bytes(
 
 def get_icon_bytes_io(
         icon_name:str,
+        icon_index:int=0,
         icon_set:IconSets=IconSets.DEFAULT,
-        retry_with_default:bool=True
+
+        retry_default_set:bool=True,
+        retry_lower_index:bool=True,
         ) -> Union[BytesIO, None]:
     
     try:
-        data = get_icon_bytes(icon_name, icon_set, retry_with_default)
+        data = get_icon_bytes(
+            icon_name,
+            icon_index,
+            icon_set,
+
+            retry_default_set=retry_default_set,
+            retry_lower_index=retry_lower_index,
+            )
     except:
         raise
     
@@ -119,3 +149,5 @@ def get_icon_bytes_io(
         return None
 
     return BytesIO(data)
+
+update_icon_sets_data()

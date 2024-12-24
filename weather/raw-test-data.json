@@ -40,6 +40,9 @@
     "sunrise": 1734324513,
     "sunset": 1734351681
   },
+  "rain": {
+    "1h": 0.32
+  },
   "timezone": 14400,
   "id": 499099,
   "name": "Samara",

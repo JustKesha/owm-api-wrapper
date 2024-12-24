@@ -4,7 +4,7 @@ from .log import log, MessageTypes
 from utils import convert
 from utils import discord as discord_utils
 from geocode import get_location, Location
-from weather import get_weather, Weather, MeasurementSystems
+from weather import get_weather, Weather, MeasurementSystems, IconSets
 
 configurated = False
 bot:discord.Bot

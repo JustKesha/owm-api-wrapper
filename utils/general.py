@@ -1,4 +1,7 @@
 from datetime import datetime
+from typing import List
+
+# NUMBERS
 
 def clamp(num:int, num_min:int, num_max:int) -> int:
     return max(min(num, num_max), num_min)
@@ -15,8 +18,45 @@ def remove_trailing_zeros(num:float):
     
     return int(no_zeros_str)
 
+# STRINGS
+
 def upcase_first_char(s:str) -> str:
     return s[0].upper() + s[1:]
+
+# ARRAYS
+
+def wrap_text_block(
+        block_elements:List[str],
+        elements_in_row:int=2,
+        capitalize_rows:bool=True,
+        join:str=', ',
+        row_end:str='\n',
+        end:str='.',
+        ) -> str:
+    
+    result = ''
+    new_row = True
+    for i, el in enumerate(block_elements):
+
+        if new_row and capitalize_rows:
+            el = upcase_first_char(el)
+            new_row = False
+        
+        result += el
+
+        if i == len(block_elements) - 1:
+            result += end
+            break
+        else:
+            result += join
+
+        if (i + 1) % elements_in_row == 0:
+            result += row_end
+            new_row = True
+    
+    return result
+
+# TIME
 
 def is_it_past_time(
         some_time:float,

@@ -12,10 +12,20 @@ class Location():
     def get_google_maps_url(self) -> str:
         return f'https://maps.google.com/?q={self.lat},{self.lon}'
 
-    def get_address_str(self, full:bool=False, include_type:bool=False) -> str:
-        elements = [f'{self.name} {self.type}'] if include_type else [self.name]
+    def get_address_str(
+            self,
+            full:bool=False,
+            include_type:bool=False,
+            ) -> str:
+        
+        elements = []
 
-        if full and self.region != None:
+        if not include_type:
+            elements.append(self.name)
+        else:
+            elements.append(f'{self.name} {self.type}')
+
+        if self.region and full:
             elements.append(self.region)
         
         elements.append(self.country)

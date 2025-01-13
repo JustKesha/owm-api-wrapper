@@ -2,9 +2,9 @@ from enum import Enum
 
 import discord
 
-from utils import upcase_first_char
 from geocode import Location
 from weather import Weather, MeasurementSystems
+from .general import wrap_text_block
 
 # TODO Put all messages into english.json
 # TODO Move back to bot package (both will have to use the same english.json)
@@ -34,7 +34,7 @@ async def respond_with_error(
     ):
     # TODO Add a return value type hint
 
-    if len(error) > 0:
+    if error:
         error += '\n'
 
     message = f'{reaction},\n\n{error}{solution}'
@@ -49,9 +49,11 @@ def get_weather_embed(
         report:Weather,
         system:int=MeasurementSystems.METRIC,
         allow_simplification:bool=True,
-        thumbnail_attachment:str=''
+        thumbnail_attachment:str='',
     ) -> discord.Embed:
-    # NOTE When allow_simplification set to True some data (which was found irrelevant using the relevant consts) will be hidden
+    '''
+    NOTE When allow_simplification set to True some data will be hidden if found neglectable
+    '''
 
     # GENERAL
 
@@ -148,20 +150,28 @@ def get_weather_embed(
     
     # DETAILS
 
-    sunrise_timestamp = get_timestamp(report.time.sunrise, TimestampFormats.RELATIVE)
-    sunset_timestamp = get_timestamp(report.time.sunset, TimestampFormats.RELATIVE)
+    sunrise_timestamp = get_timestamp(
+        report.time.sunrise,
+        TimestampFormats.RELATIVE
+        )
+    
+    sunset_timestamp = get_timestamp(
+        report.time.sunset,
+        TimestampFormats.RELATIVE
+        )
 
-    daylight_hours_str= f'Sunrise {sunrise_timestamp}, sunset {sunset_timestamp}.'
+    details_elements = [
+        f'sunrise {sunrise_timestamp}',
+        f'sunset {sunset_timestamp}',
+        report.humidity.get_str(),
+        report.clouds.get_str(),
+        report.pressure.sea_level.get_str(system=system),
+        report.visibility.get_str(system=system),
+    ]
 
     embed.add_field(
         name = 'Details',
-        value = daylight_hours_str + ', '.join([
-            '\n' + upcase_first_char(report.humidity.get_str()),
-            report.clouds.get_str(),
-
-            '\n' + upcase_first_char(report.pressure.sea_level.get_str(system=system)),
-            report.visibility.get_str(system=system),
-            ]) + '.',
+        value = wrap_text_block(details_elements),
         inline = False,
         )
 

@@ -34,7 +34,7 @@ async def test_weather(lat:float, lon:float, expected_output) -> bool:
         log(f'Something went wrong: {error}', MessageTypes.FAIL)
         return False
 
-    output = data.timezone.offset
+    output = data.time.offset
 
     log(expected_output, MessageTypes.EXPECTED_OUTPUT)
     log(output, MessageTypes.OUTPUT)

@@ -6,7 +6,7 @@ import requests
 configurated = False
 example_data:dict
 
-with importlib.resources.open_text("weather", "raw-test-data.json") as file: # Uses utf-8 encoding by default
+with importlib.resources.open_text("weather", "example.json") as file: # Uses utf-8 encoding by default
     example_data = json.load(file)
 
 def configurate(base_url:str, key:str):

@@ -174,6 +174,9 @@ class Time():
         self.sunset = sunset
         self.is_past_sunset:bool = utils.is_it_past_time(sunset, offset)
 
+    def get_current(self) -> int:
+        return int(utils.get_utc_time() + self.offset)
+
 class Visibility():
     def __init__(self, m:float) -> None:
         self.m = Value(m, 'm', 0)
@@ -265,7 +268,7 @@ class Weather():
         ) -> None:
 
         self.title = title
-        self.description = description
+        self.description = None if title == description else description
         self.weather_code = weather_code
         self.default_icon_url = default_icon_url
 

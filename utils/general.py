@@ -30,7 +30,7 @@ def wrap_text_block(
         elements_in_row:int=2,
         capitalize_rows:bool=True,
         join:str=', ',
-        row_end:str='\n',
+        row_end:str=',\n',
         end:str='.',
         ) -> str:
     
@@ -46,17 +46,25 @@ def wrap_text_block(
 
         if i == len(block_elements) - 1:
             result += end
-            break
-        else:
-            result += join
-
-        if (i + 1) % elements_in_row == 0:
+        elif (i + 1) % elements_in_row == 0:
             result += row_end
             new_row = True
+        else:
+            result += join
     
     return result
 
 # TIME
+
+def get_utc_time() -> float:
+    return datetime.utcnow().timestamp()
+
+def unix_time_to_str(seconds:float) -> str:
+    # NOTE In discord, decided to use embed timestamps
+    # Leaving it be for other platforms / if gonna stop using embed timestamps
+    dt = datetime.fromtimestamp(seconds)
+    # Doing this instead of strftime to avoid leading zeros in day & hour
+    return f'{dt:%A} {dt.hour}:{dt:%M} {dt:%p}, {dt:%b} {dt.day}'
 
 def is_it_past_time(
         some_time:float,
@@ -64,6 +72,6 @@ def is_it_past_time(
         utc_time:float=None,
         ) -> bool:
     if utc_time is None:
-        utc_time = datetime.utcnow().timestamp()
+        utc_time = get_utc_time()
     
     return utc_time + timezone_offset > some_time

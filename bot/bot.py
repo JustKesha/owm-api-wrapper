@@ -120,7 +120,7 @@ def init():
                 location=location,
                 report=report,
                 system=system,
-                thumbnail_attachment=thumbnail_attachment
+                thumbnail_attachment=thumbnail_attachment,
             ),
         )
 

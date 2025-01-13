@@ -16,7 +16,12 @@ class Location():
             self,
             full:bool=False,
             include_type:bool=False,
+            hide_duplicative_region:bool=True,
             ) -> str:
+        '''
+        If hide_duplicative_region is True and location name is the same
+        as region name will hide the region name
+        '''
         
         elements = []
 
@@ -25,7 +30,8 @@ class Location():
         else:
             elements.append(f'{self.name} {self.type}')
 
-        if self.region and full:
+        if(self.region and full
+           and (self.name != self.region or not hide_duplicative_region)):
             elements.append(self.region)
         
         elements.append(self.country)

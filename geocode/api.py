@@ -4,7 +4,15 @@ import json
 import geopy # pip install geopy
 # from geopy.geocoders import Nominatim
 
-DEFAULT_ADDRESS_TYPES = ['city','village','hamlet']
+DEFAULT_ADDRESS_TYPES = [
+    'city',
+    'province',
+    'town',
+    'village',
+    'hamlet',
+    
+    'islet',
+    ]
 
 configurated = False
 geolocator:geopy.geocoders.Nominatim = None
@@ -43,5 +51,5 @@ def request_raw_locations_data(search_input:str, address_types:list=DEFAULT_ADDR
     # If address_types not empty, only include results matching any of address_types
     if len(address_types) != 0:
         raw_results = [location for location in raw_results if location['addresstype'] in address_types]
-
+    
     return raw_results

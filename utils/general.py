@@ -71,7 +71,7 @@ def is_it_past_time(
         timezone_offset:float=0,
         utc_time:float=None,
         ) -> bool:
-    if utc_time is None:
+    if not utc_time:
         utc_time = get_utc_time()
     
     return utc_time + timezone_offset > some_time

@@ -12,8 +12,9 @@ from .general import wrap_text_block, unix_time_to_str
 
 SPEED_WIND_INGORE_MS = 1.0
 SPEED_GUSTS_IGNORE_MARGIN_MS = 2.5
+SPEED_GUSTS_IGNORE_DIRECTION = 5.0
 
-TEMP_FEELS_IGNORE_MARGIN_C = 1.0
+TEMP_FEELS_IGNORE_MARGIN_C = 2.5
 TEMP_RANGE_IGNORE_MARGIN_C = 1.5
 
 class TimestampFormats(Enum):
@@ -53,12 +54,14 @@ def get_weather_embed(
         thumbnail_attachment:str='',
         join:str=', ',
         end:str='.',
-        # I really wanna use RELATIVE but it gets all messed up if youre viewing weather outside your timezone
+        # Discord's timestamps can be pretty confusing so might move on from them
         timestamp_format:TimestampFormats=TimestampFormats.TIME,
     ) -> discord.Embed:
     '''
     NOTE When allow_simplification set to True some data will be hidden if found neglectable
     '''
+
+    values_accuracy = 0 if allow_simplification else None
 
     # GENERAL
 
@@ -88,7 +91,10 @@ def get_weather_embed(
 
     # TEMEPERATURE
 
-    temp_current = report.temperature.actual.get_str(system=system)
+    temp_current = report.temperature.actual.get_str(
+        system=system,
+        accuracy=values_accuracy,
+        )
 
     temperature_elements = [
         f'Current {temp_current}',
@@ -101,7 +107,7 @@ def get_weather_embed(
 
         temp_feels = report.temperature.feels_like.get_str(
             system=system,
-            accuracy=0
+            accuracy=values_accuracy
         )
 
         temperature_elements.append(f'Feels like {temp_feels}')
@@ -140,15 +146,16 @@ def get_weather_embed(
 
     if wind_speed_ms > SPEED_WIND_INGORE_MS or not allow_simplification:
         wind_elements = [
-            f'Speed {report.wind.speed.get_str(system=system)}',
+            f'Speed {report.wind.speed.get_str(system=system, accuracy=values_accuracy)}',
         ]
         
         wind_gusts_ms = report.wind.gusts.ms.get_value()
 
         if wind_gusts_ms - wind_speed_ms >= SPEED_GUSTS_IGNORE_MARGIN_MS or not allow_simplification:
-            wind_elements.append(f'Gusts up to {report.wind.gusts.get_str(system=system)}')
+            wind_elements.append(f'Gusts up to {report.wind.gusts.get_str(system=system, accuracy=values_accuracy)}')
         
-        wind_elements.append(f'Coming from {report.wind.cardinal_point.long}',)
+        if wind_gusts_ms >= SPEED_GUSTS_IGNORE_DIRECTION or not allow_simplification:
+            wind_elements.append(f'Coming from {report.wind.cardinal_point.long}',)
 
         embed.add_field(
             name = 'Wind',
@@ -168,7 +175,7 @@ def get_weather_embed(
 
     showing_sunrise = False
     if( not report.time.is_past_sunrise
-        or not allow_simplification ):
+        or not allow_simplification):
 
         sunrise_timestamp = get_timestamp(
             report.time.sunrise,

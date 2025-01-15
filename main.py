@@ -8,17 +8,29 @@ import tests
 import geocode
 import weather
 import bot
+from tests.logger import MessageFilters
 
 def configurate():
     print('/ configuring project')
 
     dotenv.load_dotenv()
 
-    weather.configurate(base_url=os.getenv('OPENWEATHER_BASE_URL'), key=os.getenv('OPENWEATHER_API_KEY'))
+    weather.configurate(
+        base_url=os.getenv('OPENWEATHER_BASE_URL'),
+        key=os.getenv('OPENWEATHER_API_KEY') )
+    
     geocode.configurate(user_agent=os.getenv('USER_AGENT'))
-    bot.configurate(api_key=os.getenv('DISCORD_API_KEY'), test_guild_ids=[os.getenv('DISCORD_TEST_GUILD_ID')])
 
-async def run_tests(log_filter:int=tests.logger.MessageFilters.ONLY_RESULTS) -> bool:
+    test_guild = os.getenv('DISCORD_TEST_GUILD_ID')
+
+    bot.configurate(
+        api_key=os.getenv('DISCORD_API_KEY'),
+        test_guild_ids=[test_guild] if test_guild else None )
+
+async def run_tests(
+        log_filter:int=MessageFilters.ONLY_RESULTS
+        ) -> bool:
+    
     print('/ running basic module tests')
 
     tests.logger.set_filter(log_filter)
@@ -26,7 +38,7 @@ async def run_tests(log_filter:int=tests.logger.MessageFilters.ONLY_RESULTS) -> 
     return await tests.run_tests()
 
 def run_bot(log_filter:list=bot.log.Filters.NONE):
-    print('/ runnig bot')
+    print('/ starting the bot')
 
     bot.log.set_filter(log_filter)
     
@@ -49,8 +61,8 @@ async def main(include_tests:bool=False):
         print('! something went wrong:', e)
         return
 
-# This all is just for the sole purpose of using the silly tests i wrote
-# And it seems like bit too much, might just wanna remove them bc +2 dependencies
+# Doing this to be able to run those tests
+# Might consider removing due to 2 dependencies
 if __name__ ==  '__main__':
     nest_asyncio.apply()
     loop = asyncio.get_event_loop()

@@ -11,7 +11,7 @@ bot:discord.Bot
 key:str
 test_guilds:list
 
-def configurate(api_key:str, test_guild_ids:list=[]):
+def configurate(api_key:str, test_guild_ids:list=None):
     global key, test_guilds, configurated
 
     key = api_key
@@ -33,13 +33,6 @@ def init():
     @bot.listen(once=True)
     async def on_ready():
         log('running', MessageTypes.PROC)
-
-    # EVENTS
-    @bot.event
-    async def on_message(message:discord.Message):
-        if message.author == bot.user: return
-
-        log(f'"{message.author.global_name}" says "{message.content}"', MessageTypes.INFO)
 
     # LISTENERS
     @bot.listen()

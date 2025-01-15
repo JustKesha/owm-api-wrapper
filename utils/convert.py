@@ -120,7 +120,7 @@ def get_visibility_index(visibility_m:int) -> int:
         return 5
 
 AVARAGE_PRESSURE_MMHG = 760
-NORM_PRESSURE_RANGE_MMHG = 45
+NORM_PRESSURE_RANGE_MMHG = 30
 
 def get_pressure_index(pressure_mmhg:float) -> int:
     if   pressure_mmhg <= AVARAGE_PRESSURE_MMHG - NORM_PRESSURE_RANGE_MMHG / 2:

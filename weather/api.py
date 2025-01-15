@@ -36,4 +36,7 @@ async def request_data(lat:float=0, lon:float=0, test:bool=False) -> dict:
     
     response = response_raw.json()
 
+    if response['cod'] != 200:
+        raise Exception(response['message'])
+
     return response

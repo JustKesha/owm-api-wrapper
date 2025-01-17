@@ -96,7 +96,7 @@ def get_weather_embed(
         accuracy=values_accuracy,
         )
 
-    temperature_elements = [
+    temp_elements = [
         f'Current {temp_current}',
     ]
 
@@ -110,7 +110,7 @@ def get_weather_embed(
             accuracy=values_accuracy
         )
 
-        temperature_elements.append(f'Feels like {temp_feels}')
+        temp_elements.append(f'Feels like {temp_feels}')
     
     temp_min_c = report.temperature.min.c.get_value()
     temp_max_c = report.temperature.max.c.get_value()
@@ -122,17 +122,19 @@ def get_weather_embed(
         temp_min = report.temperature.min.get_str(system=system)
         temp_max = report.temperature.max.get_str(system=system)
 
-        temperature_elements.append(f'Ranging from {temp_min} to {temp_max}')
-    
+        temp_elements.append(f'Ranging from {temp_min} to {temp_max}')
+
+    temp_desc = wrap_text_block(
+        temp_elements,
+
+        elements_in_row=1,
+        join=join,
+        end=end,
+    ) if len(temp_elements) > 1 else temp_current
+
     embed.add_field(
         name = 'Temperature',
-        value = wrap_text_block(
-            temperature_elements,
-
-            elements_in_row=1,
-            join=join,
-            end=end,
-        ),
+        value = temp_desc,
         inline = True,
     )
     
@@ -145,27 +147,45 @@ def get_weather_embed(
     wind_speed_ms = report.wind.speed.ms.get_value()
 
     if wind_speed_ms > SPEED_WIND_INGORE_MS or not allow_simplification:
+        wind_speed = report.wind.speed.get_str(
+            system=system,
+            accuracy=values_accuracy,
+            )
+
         wind_elements = [
-            f'Speed {report.wind.speed.get_str(system=system, accuracy=values_accuracy)}',
+            f'Speed {wind_speed}',
         ]
         
         wind_gusts_ms = report.wind.gusts.ms.get_value()
 
-        if wind_gusts_ms - wind_speed_ms >= SPEED_GUSTS_IGNORE_MARGIN_MS or not allow_simplification:
-            wind_elements.append(f'Gusts up to {report.wind.gusts.get_str(system=system, accuracy=values_accuracy)}')
+        if(wind_gusts_ms - wind_speed_ms >= SPEED_GUSTS_IGNORE_MARGIN_MS
+            or not allow_simplification ):
+
+            gusts_speed = report.wind.gusts.get_str(
+                system=system,
+                accuracy=values_accuracy,
+                )
+
+            wind_elements.append(f'Gusts up to {gusts_speed}')
         
-        if wind_gusts_ms >= SPEED_GUSTS_IGNORE_DIRECTION or not allow_simplification:
-            wind_elements.append(f'Coming from {report.wind.cardinal_point.long}',)
+        if(wind_gusts_ms >= SPEED_GUSTS_IGNORE_DIRECTION
+           or not allow_simplification):
+            
+            direction = report.wind.cardinal_point.long
+
+            wind_elements.append(f'Coming from {direction}',)
+        
+        wind_desc = wrap_text_block(
+            wind_elements,
+
+            elements_in_row=1,
+            join=join,
+            end=end,
+        ) if len(wind_elements) > 1 else wind_speed
 
         embed.add_field(
             name = 'Wind',
-            value = wrap_text_block(
-                wind_elements,
-
-                elements_in_row=1,
-                join=join,
-                end=end,
-            ),
+            value = wind_desc,
             inline = True,
         )
     

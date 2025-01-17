@@ -180,7 +180,7 @@ class Time():
 class Visibility():
     def __init__(self, m:float) -> None:
         self.m = Value(m, 'm', 0)
-        self.km = Value(m/1000, 'km', 1)
+        self.km = Value(m/1000, 'km', 0)
         self.mi = Value(convert.m_to_mi(m), 'miles', 2)
 
         self.index = convert.get_visibility_index(self.m.get_value())
@@ -207,9 +207,9 @@ class Visibility():
         match system:
             case MeasurementSystems.METRIC:
                 if self.m.get_value() > 1000:
-                    output += self.km.get_str()
+                    output += self.km.get_str(separator=separator, accuracy=accuracy)
                 else:
-                    output += self.m.get_str()
+                    output += self.m.get_str(separator=separator, accuracy=accuracy)
             case MeasurementSystems.IMPERIAL:
                 output += self.mi.get_str(separator=separator, accuracy=accuracy)
 

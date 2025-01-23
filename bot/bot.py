@@ -4,7 +4,7 @@ from .log import log, MessageTypes
 from utils import convert
 from utils import discord as discord_utils
 from geocode import get_location, Location
-from weather import get_weather, Weather, MeasurementSystems, IconSets
+from weather import get_weather, Weather, MeasurementSystems, TimeFormats
 
 configurated = False
 bot:discord.Bot
@@ -106,6 +106,16 @@ def init():
         if icon_bytes_io:
             thumbnail_attachment = 'icon.png'
             files.append(discord.File(icon_bytes_io, thumbnail_attachment))
+        
+        # FIXME Do a proper time format autodetection by region
+
+        if system == MeasurementSystems.IMPERIAL:
+            time_format = TimeFormats.H12 
+            time_format_long = TimeFormats.H12_LONG
+        
+        else:
+            time_format = TimeFormats.H24
+            time_format_long = TimeFormats.H24_LONG
 
         await ctx.send_followup(
             files=files,
@@ -114,6 +124,8 @@ def init():
                 report=report,
                 system=system,
                 thumbnail_attachment=thumbnail_attachment,
+                time_format=time_format,
+                time_format_long=time_format_long,
             ),
         )
 

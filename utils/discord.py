@@ -34,7 +34,9 @@ async def respond_with_error(
 def get_weather_embed(
         location:Location,
         report:Weather,
-        system:int=MeasurementSystems.METRIC,
+        system:int=MeasurementSystems.DEFAULT,
+        time_format:str=TimeFormats.DEFAULT,
+        time_format_long:str=TimeFormats.DEFAULT,
         allow_simplification:bool=True,
         thumbnail_attachment:str='',
         join:str=', ',
@@ -65,7 +67,7 @@ def get_weather_embed(
 
     footer_time = report.time.get_str(
         seconds=report.time.get_current(),
-        format=TimeFormats.H12_LONG
+        format=time_format_long
     )
     footer_text += f' - {footer_time}'
 
@@ -79,7 +81,7 @@ def get_weather_embed(
         thumbnail_url = 'attachment://' + thumbnail_attachment
 
     embed.set_thumbnail(url=thumbnail_url)
-
+    
     # TEMEPERATURE
 
     temp_current = report.temperature.actual.get_str(
@@ -204,7 +206,7 @@ def get_weather_embed(
 
         sunrise_stamp = report.time.get_str(
             seconds=report.time.sunrise,
-            format=TimeFormats.H12, )
+            format=time_format, )
         
         details_elements.append(f'sunrise {sunrise_stamp}')
         showing_sunrise = True
@@ -215,7 +217,7 @@ def get_weather_embed(
 
         sunset_stamp = report.time.get_str(
             seconds=report.time.sunset,
-            format=TimeFormats.H12, )
+            format=time_format, )
 
         details_elements.append(f'sunset {sunset_stamp}')
 

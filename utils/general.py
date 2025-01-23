@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from typing import List
 
 # NUMBERS
@@ -22,8 +22,6 @@ def remove_trailing_zeros(num:float):
 
 def upcase_first_char(s:str) -> str:
     return s[0].upper() + s[1:]
-
-# ARRAYS
 
 def wrap_text_block(
         block_elements:List[str],
@@ -57,14 +55,25 @@ def wrap_text_block(
 # TIME
 
 def get_utc_time() -> float:
-    return datetime.utcnow().timestamp()
+    return datetime.now(timezone.utc).timestamp()
 
-def unix_time_to_str(seconds:float) -> str:
-    # NOTE In discord, decided to use embed timestamps
-    # Leaving it be for other platforms / if gonna stop using embed timestamps
-    dt = datetime.fromtimestamp(seconds)
-    # Doing this instead of strftime to avoid leading zeros in day & hour
-    return f'{dt:%A} {dt.hour}:{dt:%M} {dt:%p}, {dt:%b} {dt.day}'
+def unix_time_to_str(
+        seconds:float,
+        tz_offset:float,
+        format:str
+        ) -> str:
+    
+    dt = datetime.fromtimestamp(
+        seconds,
+        tz=timezone(timedelta(seconds=tz_offset)),
+        )
+
+    # To avoid leading zeros from strftime
+    return dt.strftime(format).format(
+        dt=dt,
+        hour24=dt.hour,
+        hour12=((dt.hour + 11) % 12) + 1,
+        )
 
 def is_it_past_time(
         some_time:float,
@@ -73,5 +82,5 @@ def is_it_past_time(
         ) -> bool:
     if not utc_time:
         utc_time = get_utc_time()
-    
+
     return utc_time + timezone_offset > some_time

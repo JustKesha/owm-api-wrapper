@@ -15,6 +15,14 @@ class MeasurementSystems():
     DEFAULT = METRIC
     VALUES = [METRIC, IMPERIAL]
 
+class TimeFormats():
+    H24 = "{hour24}:%M"
+    H24_LONG = "%a " + H24
+    H12 = "{hour12}:%M %p"
+    H12_LONG = "%a " + H12
+
+    DEFAULT = H24
+
 # NOTE Worth mentioning that this is strictly a numeric/float value and should probably be renamed to represent that better
 class Value():
     def __init__(self, value, unit:str, accuracy:int=2, separator:str=' ') -> None:
@@ -170,12 +178,22 @@ class Time():
     def __init__(self, offset:int, sunrise:int, sunset:int) -> None:
         self.offset = offset
         self.sunrise = sunrise
-        self.is_past_sunrise:bool = utils.is_it_past_time(sunrise, offset)
+        self.is_past_sunrise:bool = utils.is_it_past_time(self.sunrise, offset)
         self.sunset = sunset
-        self.is_past_sunset:bool = utils.is_it_past_time(sunset, offset)
+        self.is_past_sunset:bool = utils.is_it_past_time(self.sunset, offset)
 
-    def get_current(self) -> int:
-        return int(utils.get_utc_time() + self.offset)
+    def get_current(self) -> float:
+        return utils.get_utc_time() + self.offset
+    
+    def get_str(self,
+        seconds:float,
+        format:str=TimeFormats.DEFAULT,
+        ) -> str:
+
+        return utils.unix_time_to_str(
+            seconds,
+            self.offset,
+            format )
 
 class Visibility():
     def __init__(self, m:float) -> None:

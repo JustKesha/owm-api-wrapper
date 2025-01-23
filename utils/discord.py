@@ -1,11 +1,8 @@
-from enum import Enum
-from datetime import datetime
-
 import discord
 
 from geocode import Location
-from weather import Weather, MeasurementSystems
-from .general import wrap_text_block, unix_time_to_str
+from weather import Weather, MeasurementSystems, TimeFormats
+from .general import wrap_text_block
 
 # TODO Put all messages into english.json
 # TODO Move back to bot package (both will have to use the same english.json)
@@ -16,15 +13,6 @@ SPEED_GUSTS_IGNORE_DIRECTION = 5.0
 
 TEMP_FEELS_IGNORE_MARGIN_C = 2.5
 TEMP_RANGE_IGNORE_MARGIN_C = 1.5
-
-class TimestampFormats(Enum):
-    DATE = 'd'
-    DATE_LONG = 'D'
-    TIME = 't'
-    TIME_LONG = 'T'
-    DATE_AND_TIME = 'f'
-    DATE_AND_TIME_LONG = 'F'
-    RELATIVE = 'R'
 
 # TODO Replace with get error str
 async def respond_with_error(
@@ -43,9 +31,6 @@ async def respond_with_error(
 
     return await ctx.respond(message, ephemeral=ephemeral)
 
-def get_timestamp(time:int, format:TimestampFormats=TimestampFormats.DATE_AND_TIME_LONG) -> str:
-    return f'<t:{time}:{format.value}>'
-
 def get_weather_embed(
         location:Location,
         report:Weather,
@@ -54,8 +39,6 @@ def get_weather_embed(
         thumbnail_attachment:str='',
         join:str=', ',
         end:str='.',
-        # Discord's timestamps can be pretty confusing so might move on from them
-        timestamp_format:TimestampFormats=TimestampFormats.TIME,
     ) -> discord.Embed:
     '''
     NOTE When allow_simplification set to True some data will be hidden if found neglectable
@@ -77,8 +60,16 @@ def get_weather_embed(
         description = description,
     )
     embed.set_author(name='Viewing current weather in,')
-    embed.set_footer(text=location.get_address_str(full=True))
-    embed.timestamp = datetime.fromtimestamp(report.time.get_current())
+
+    footer_text = location.get_address_str(full=True)
+
+    footer_time = report.time.get_str(
+        seconds=report.time.get_current(),
+        format=TimeFormats.H12_LONG
+    )
+    footer_text += f' - {footer_time}'
+
+    embed.set_footer(text=footer_text)
 
     # THUMBNAIL
 
@@ -119,6 +110,7 @@ def get_weather_embed(
     temp_min = report.temperature.min.get_str(
         system=system,
         accuracy=values_accuracy, )
+    
     temp_max = report.temperature.max.get_str(
         system=system,
         accuracy=values_accuracy, )
@@ -210,22 +202,22 @@ def get_weather_embed(
     if( not report.time.is_past_sunrise
         or not allow_simplification):
 
-        sunrise_timestamp = get_timestamp(
-            report.time.sunrise,
-            timestamp_format )
+        sunrise_stamp = report.time.get_str(
+            seconds=report.time.sunrise,
+            format=TimeFormats.H12, )
         
-        details_elements.append(f'sunrise {sunrise_timestamp}')
+        details_elements.append(f'sunrise {sunrise_stamp}')
         showing_sunrise = True
     
     if( not report.time.is_past_sunset
         and not showing_sunrise
         or not allow_simplification ):
 
-        sunset_timestamp = get_timestamp(
-            report.time.sunset,
-            timestamp_format )
+        sunset_stamp = report.time.get_str(
+            seconds=report.time.sunset,
+            format=TimeFormats.H12, )
 
-        details_elements.append(f'sunset {sunset_timestamp}')
+        details_elements.append(f'sunset {sunset_stamp}')
 
     details_elements.append(report.humidity.get_str())
     details_elements.append(report.clouds.get_str())

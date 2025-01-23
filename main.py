@@ -27,10 +27,7 @@ def configurate():
         api_key=os.getenv('DISCORD_API_KEY'),
         test_guild_ids=[test_guild] if test_guild else None )
 
-async def run_tests(
-        log_filter:int=MessageFilters.ONLY_RESULTS
-        ) -> bool:
-    
+async def run_tests(log_filter:int=MessageFilters.ONLY_RESULTS) -> bool:
     print('/ running basic module tests')
 
     tests.logger.set_filter(log_filter)
@@ -61,7 +58,7 @@ async def main(include_tests:bool=False):
         print('! something went wrong:', e)
         return
 
-# Doing this to be able to run those tests
+# Doing this to be able to run custom tests
 # Might consider removing due to 2 dependencies
 if __name__ ==  '__main__':
     nest_asyncio.apply()

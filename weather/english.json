@@ -60,7 +60,7 @@
     ],
     
     "humidity": [
-        "no humidity",
+        "dry air",
 
         "low humidity",
         "humidity",
@@ -75,7 +75,7 @@
         "cloudiness",
         "high cloudiness",
 
-        "covered by clouds"
+        "covered in clouds"
     ],
     "visibility": [
         "extremely poor visibility",

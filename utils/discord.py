@@ -158,18 +158,23 @@ def get_weather_embed(
         
         wind_gusts_ms = report.wind.gusts.ms.get_value()
 
-        if(wind_gusts_ms - wind_speed_ms >= SPEED_GUSTS_IGNORE_MARGIN_MS
+        if( wind_gusts_ms - wind_speed_ms >= SPEED_GUSTS_IGNORE_MARGIN_MS
             or not allow_simplification ):
 
             gusts_speed = report.wind.gusts.get_str(
                 system=system,
-                accuracy=values_accuracy,
-                )
+                accuracy=values_accuracy, )
 
-            wind_elements.append(f'Gusts up to {gusts_speed}')
+            gusts_str = f'Gusts up to {gusts_speed}'
+
+            if allow_simplification:
+                wind_elements = [gusts_str]
+
+            else:
+                wind_elements.append(gusts_str)
         
-        if(wind_gusts_ms >= SPEED_GUSTS_IGNORE_DIRECTION
-           or not allow_simplification):
+        if( wind_gusts_ms >= SPEED_GUSTS_IGNORE_DIRECTION
+           or not allow_simplification ):
             
             direction = report.wind.cardinal_point.long
 

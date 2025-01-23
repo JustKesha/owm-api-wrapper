@@ -12,9 +12,10 @@ ICON_SET_INDEX_FILE_NAME = 'index.json'
 # NOTE Dont forget to update this when changing icon sets list
 class IconSets(Enum):
     # Values must be names of icon set directories
+    Dev = 'dev'
     Microsoft3D = 'microsoft'
 
-    DEFAULT = Microsoft3D
+    DEFAULT = Dev
 
 icon_sets_data = {}
 

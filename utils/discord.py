@@ -93,8 +93,7 @@ def get_weather_embed(
 
     temp_current = report.temperature.actual.get_str(
         system=system,
-        accuracy=values_accuracy,
-        )
+        accuracy=values_accuracy, )
 
     temp_elements = [
         f'Current {temp_current}',
@@ -107,22 +106,31 @@ def get_weather_embed(
 
         temp_feels = report.temperature.feels_like.get_str(
             system=system,
-            accuracy=values_accuracy
-        )
+            accuracy=values_accuracy, )
 
         temp_elements.append(f'Feels like {temp_feels}')
     
     temp_min_c = report.temperature.min.c.get_value()
     temp_max_c = report.temperature.max.c.get_value()
 
-    if((abs(temp_current_c - temp_min_c) >= TEMP_RANGE_IGNORE_MARGIN_C or
-        abs(temp_current_c - temp_max_c) >= TEMP_RANGE_IGNORE_MARGIN_C) or
-        not allow_simplification):
+    show_min_temp = abs(temp_current_c - temp_min_c) >= TEMP_RANGE_IGNORE_MARGIN_C
+    show_max_temp = abs(temp_current_c - temp_max_c) >= TEMP_RANGE_IGNORE_MARGIN_C
 
-        temp_min = report.temperature.min.get_str(system=system)
-        temp_max = report.temperature.max.get_str(system=system)
+    temp_min = report.temperature.min.get_str(
+        system=system,
+        accuracy=values_accuracy, )
+    temp_max = report.temperature.max.get_str(
+        system=system,
+        accuracy=values_accuracy, )
 
+    if show_min_temp and show_max_temp or not allow_simplification:
         temp_elements.append(f'Ranging from {temp_min} to {temp_max}')
+
+    elif show_min_temp:
+        temp_elements.append(f'Goes down to {temp_min}')
+    
+    elif show_max_temp:
+        temp_elements.append(f'Goes up to {temp_max}')
 
     temp_desc = wrap_text_block(
         temp_elements,

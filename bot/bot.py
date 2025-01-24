@@ -1,4 +1,5 @@
 import discord # py-cord
+from discord.ext import commands
 
 from .log import log, MessageTypes
 from utils import discord as discord_utils
@@ -53,6 +54,7 @@ def init():
         description='Request fresh weather data from the API.',
         guild_ids=test_guilds,
     )
+    @commands.cooldown(1, 7)
     async def _weather(
         ctx:discord.ApplicationContext,
         search:discord.Option(
@@ -112,6 +114,14 @@ def init():
                 thumbnail_attachment=thumbnail_attachment,
             ),
         )
+    
+    @bot.event
+    async def on_application_command_error(
+        ctx: discord.ApplicationContext,
+        error: Exception ):
+
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.respond(error, ephemeral=True)
 
 def start():
     if not configurated:

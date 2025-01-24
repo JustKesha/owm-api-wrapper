@@ -1,7 +1,7 @@
 import discord
 
 from geocode import Location
-from weather import Weather, MeasurementSystems, TimeFormats
+from weather import Weather, TimeFormats
 from .general import wrap_text_block
 
 # TODO Put all messages into english.json
@@ -34,9 +34,9 @@ async def respond_with_error(
 def get_weather_embed(
         location:Location,
         report:Weather,
-        system:int=MeasurementSystems.DEFAULT,
-        time_format:str=TimeFormats.DEFAULT,
-        time_format_long:str=TimeFormats.DEFAULT,
+        system:int=None,
+        time_format:str=None,
+        time_format_long:str=None,
         allow_simplification:bool=True,
         thumbnail_attachment:str='',
         join:str=', ',
@@ -45,6 +45,15 @@ def get_weather_embed(
     '''
     NOTE When allow_simplification set to True some data will be hidden if found neglectable
     '''
+
+    if system is None:
+        system = report.system
+
+    if time_format is None:
+        time_format = report.time_format
+
+    if time_format_long is None:
+        time_format_long = report.time_format_long
 
     values_accuracy = 0 if allow_simplification else None
 

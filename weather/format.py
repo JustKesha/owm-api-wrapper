@@ -23,6 +23,26 @@ class TimeFormats():
 
     DEFAULT = H24
 
+# ISO 3166-1 alpha-2
+IMPERIAL_SYSTEM_COUNTRY_CODES = [
+    'US', 'LR', 'MM',
+]
+H12_FORMAT_COUNTRY_CODES = [
+    'US', 'AU', 'BD', 'CA', 'IN', 'IE', 'MX', 'NZ', 'PK', 'PH', 'ZA', 'GB',
+]
+
+def country_code_to_measurement_system(country_code:str) -> int:
+    if country_code in IMPERIAL_SYSTEM_COUNTRY_CODES:
+        return MeasurementSystems.IMPERIAL
+    
+    return MeasurementSystems.METRIC
+
+def country_code_to_time_format(country_code:str, long:bool=False) -> str:
+    if country_code in H12_FORMAT_COUNTRY_CODES:
+        return TimeFormats.H12_LONG if long else TimeFormats.H12
+    
+    return TimeFormats.H24_LONG if long else TimeFormats.H24
+
 # NOTE Worth mentioning that this is strictly a numeric/float value and should probably be renamed to represent that better
 class Value():
     def __init__(self, value, unit:str, accuracy:int=2, separator:str=' ') -> None:
@@ -272,6 +292,8 @@ class Weather():
             weather_code:int,
             default_icon_url:str,
 
+            country_code:str,
+
             temperature:TemperatureData,
             wind:Wind,
 
@@ -289,6 +311,11 @@ class Weather():
         self.description = None if title == description else description
         self.weather_code = weather_code
         self.default_icon_url = default_icon_url
+
+        self.country_code = country_code
+        self.system = country_code_to_measurement_system(country_code)
+        self.time_format = country_code_to_time_format(country_code)
+        self.time_format_long = country_code_to_time_format(country_code, True)
 
         self.temperature = temperature
         self.wind = wind
@@ -352,6 +379,7 @@ def format_data(raw_data:dict) -> Weather:
             degree = raw_data['wind']['deg'],
         ),
         weather_code = raw_data['weather'][0]['id'],
+        country_code = raw_data['sys']['country'],
         default_icon_url = f'https://openweathermap.org/img/wn/{raw_data["weather"][0]["icon"]}@2x.png',
 
         humidity = Humidity(raw_data['main']['humidity']),

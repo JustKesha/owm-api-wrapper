@@ -96,9 +96,6 @@ def init():
                 solution='Maybe try again later?',
             )
 
-        if system is None:
-            system = convert.get_measurement_system_index_by_country_code(location.country_code)
-
         files = []
         thumbnail_attachment = ''
         icon_bytes_io = report.get_icon()
@@ -106,16 +103,6 @@ def init():
         if icon_bytes_io:
             thumbnail_attachment = 'icon.png'
             files.append(discord.File(icon_bytes_io, thumbnail_attachment))
-        
-        # FIXME Do a proper time format autodetection by region
-
-        if system == MeasurementSystems.IMPERIAL:
-            time_format = TimeFormats.H12 
-            time_format_long = TimeFormats.H12_LONG
-        
-        else:
-            time_format = TimeFormats.H24
-            time_format_long = TimeFormats.H24_LONG
 
         await ctx.send_followup(
             files=files,
@@ -124,8 +111,6 @@ def init():
                 report=report,
                 system=system,
                 thumbnail_attachment=thumbnail_attachment,
-                time_format=time_format,
-                time_format_long=time_format_long,
             ),
         )
 

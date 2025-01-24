@@ -76,8 +76,8 @@ def knots_to_beaufort_scale_index(knots:float) -> int:
         if knots <= ceiling:
             return i
 
-# CUSTOM INDEXES
-# NOTE It is probably more fit to be inside the weather package
+# CUSTOM
+# NOTE Probably more fit inside weather package
 
 def get_humidity_index(humidity:int) -> int:
     if   humidity == 0:
@@ -129,18 +129,6 @@ def get_pressure_index(pressure_mmhg:float) -> int:
         return 1
     else:
         return 2
-
-# Using lowercase ISO 3166-1 alpha-2 codes
-IMPERIAL_SYSTEM_COUNTRY_CODES = [
-    'us', 'lr', 'mm'
-]
-
-# NOTE At least this one is surely more fit into the weather package as it should be using consts from MeasurementSystems class
-def get_measurement_system_index_by_country_code(country_code:str) -> int:
-    if country_code in IMPERIAL_SYSTEM_COUNTRY_CODES:
-        return 1
-    
-    return 0
 
 # CARDINAL POINTS
 

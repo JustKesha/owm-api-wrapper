@@ -1,7 +1,6 @@
 import discord # py-cord
 
 from .log import log, MessageTypes
-from utils import convert
 from utils import discord as discord_utils
 from geocode import get_location, Location
 from weather import get_weather, Weather, MeasurementSystems, TimeFormats
@@ -113,25 +112,6 @@ def init():
                 thumbnail_attachment=thumbnail_attachment,
             ),
         )
-
-    @bot.slash_command(
-        name='find',
-        description='Gets location data from Nominatim - OpenStreetMap using GeoPy.',
-        guild_ids=test_guilds,
-    )
-    async def _find(ctx:discord.ApplicationContext, search:str):
-        await ctx.response.defer(ephemeral=True)
-
-        location:Location = get_location(search)
-        
-        if location == None:
-            return await discord_utils.respond_with_error(
-                ctx,
-                error='Couldnt find the location.',
-                solution='Maybe try reformulating your query or swapping parts of your query?',
-            )
-
-        await ctx.send_followup(location.get_str())
 
 def start():
     if not configurated:

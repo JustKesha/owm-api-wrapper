@@ -54,7 +54,7 @@ def init():
         description='Request fresh weather data from the API.',
         guild_ids=test_guilds,
     )
-    @commands.cooldown(1, 7)
+    @commands.cooldown(1, 5)
     async def _weather(
         ctx:discord.ApplicationContext,
         search:discord.Option(
@@ -76,26 +76,24 @@ def init():
             ],
         )=None,
     ):
-        await ctx.response.defer(ephemeral=True)
+        await ctx.response.defer()
 
         location:Location = get_location(search)
         
         if location == None:
-            return await discord_utils.respond_with_error(
-                ctx,
+            return await ctx.send_followup(discord_utils.get_error_message(
                 error='Couldnt pinpoint the location.',
                 solution='Maybe try reformulating your query or swapping parts of your query?',
-            )
+            ))
 
         try:
             report:Weather = await get_weather(lat=location.lat, lon=location.lon)
         except Exception as e:
             log(e, MessageTypes.WARN)
-            return await discord_utils.respond_with_error(
-                ctx,
+            return await ctx.send_followup(discord_utils.get_error_message(
                 error='Couldnt load the weather report.',
                 solution='Maybe try again later?',
-            )
+            ))
 
         files = []
         thumbnail_attachment = ''

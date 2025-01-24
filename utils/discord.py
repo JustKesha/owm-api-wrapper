@@ -1,7 +1,7 @@
 import discord
 
 from geocode import Location
-from weather import Weather, TimeFormats
+from weather import Weather
 from .general import wrap_text_block
 
 # TODO Put all messages into english.json
@@ -14,22 +14,15 @@ SPEED_GUSTS_IGNORE_DIRECTION = 5.0
 TEMP_FEELS_IGNORE_MARGIN_C = 2.5
 TEMP_RANGE_IGNORE_MARGIN_C = 1.5
 
-# TODO Replace with get error str
-async def respond_with_error(
-        ctx:discord.ApplicationContext,
+def get_error_message(
         error='Looks like something went wrong.',
         solution='Maybe try again later?',
-        reaction='Whoops',
-        ephemeral=True
-    ):
-    # TODO Add a return value type hint
-
+        reaction='Whoops'
+    ) -> str:
     if error:
         error += '\n'
 
-    message = f'{reaction},\n\n{error}{solution}'
-
-    return await ctx.respond(message, ephemeral=ephemeral)
+    return f'{reaction},\n\n{error}{solution}'
 
 def get_weather_embed(
         location:Location,

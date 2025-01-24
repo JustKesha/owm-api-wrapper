@@ -12,6 +12,7 @@ DEFAULT_ADDRESS_TYPES = [
     'hamlet',
     
     'islet',
+    'county',
     ]
 
 configurated = False

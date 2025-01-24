@@ -19,12 +19,9 @@ configurated = False
 geolocator:geopy.geocoders.Nominatim = None
 
 def configurate(user_agent:str):
-    global geolocator, autocomplete_data, configurated
+    global geolocator, configurated
 
     geolocator = geopy.geocoders.Nominatim(user_agent=user_agent)
-
-    with open('./geocode/autocomplete.json', 'r', encoding='utf-8') as file:
-        autocomplete_data = json.load(file)
     
     configurated = True
 

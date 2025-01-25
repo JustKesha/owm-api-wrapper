@@ -51,7 +51,7 @@ def init():
 
     @bot.slash_command(
         name='weather',
-        description='Request fresh weather data from the API.',
+        description='Look up fresh weather anywhere in the world!',
         guild_ids=test_guilds,
     )
     @commands.cooldown(1, 5)
@@ -60,17 +60,19 @@ def init():
         search:discord.Option(
             str,
             required=True,
+            description='Enter in any city, village or town name',
         ),
-        system:discord.Option(
+        units:discord.Option(
             int,
             required=False,
+            description='If not specified, will be selected according to location',
             choices=[
                 discord.OptionChoice(
-                    name='Metric (SI)',
+                    name='Metric',
                     value=MeasurementSystems.METRIC,
                 ),
                 discord.OptionChoice(
-                    name='Imperial (U.S. Customary System)',
+                    name='Imperial',
                     value=MeasurementSystems.IMPERIAL,
                 ),
             ],
@@ -108,7 +110,7 @@ def init():
             embed=discord_utils.get_weather_embed(
                 location=location,
                 report=report,
-                system=system,
+                system=units,
                 thumbnail_attachment=thumbnail_attachment,
             ),
         )

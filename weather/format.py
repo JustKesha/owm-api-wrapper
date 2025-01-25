@@ -203,7 +203,7 @@ class Time():
         self.is_past_sunset:bool = utils.is_it_past_time(self.sunset, offset)
 
     def get_current(self) -> float:
-        return utils.get_utc_time() + self.offset
+        return utils.get_utc_time()
     
     def get_str(self,
         seconds:float,

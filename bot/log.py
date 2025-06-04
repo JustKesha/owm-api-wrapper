@@ -1,5 +1,3 @@
-# TODO Simplify
-
 class MessageTypes():
     PROC = 0
     WARN = 1

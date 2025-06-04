@@ -4,9 +4,6 @@ from geocode import Location
 from weather import Weather
 from .general import wrap_text_block
 
-# TODO Put all messages into english.json
-# TODO Move back to bot package (both will have to use the same english.json)
-
 SPEED_WIND_INGORE_MS = 1.0
 SPEED_GUSTS_IGNORE_MARGIN_MS = 2.5
 SPEED_GUSTS_IGNORE_DIRECTION = 5.0
@@ -227,7 +224,6 @@ def get_weather_embed(
     details_elements.append(report.clouds.get_str())
     details_elements.append(report.pressure.sea_level.get_str(system=system))
 
-    # TODO Add enums
     if not allow_simplification or report.visibility.index != 5:
         details_elements.append(report.visibility.get_str(system=system))
 

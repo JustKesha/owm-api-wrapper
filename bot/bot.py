@@ -41,13 +41,11 @@ def init():
             case discord.InteractionType.application_command:
                 author:discord.User = interaction.user
 
-                # TODO Add slash command name to the print
                 log(f'"{author.global_name}" used some interaction', MessageTypes.INTR)
             case _:
                 log('unknown interaction', MessageTypes.WARN)
 
     # APPLICATION COMMANDS
-    # TODO Separate into files, look into py-cord cogs
 
     @bot.slash_command(
         name='weather',

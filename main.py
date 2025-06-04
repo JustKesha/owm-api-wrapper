@@ -58,8 +58,6 @@ async def main(include_tests:bool=False):
         print('! something went wrong:', e)
         return
 
-# Doing this to be able to run custom tests
-# Might consider removing due to 2 dependencies
 if __name__ ==  '__main__':
     nest_asyncio.apply()
     loop = asyncio.get_event_loop()

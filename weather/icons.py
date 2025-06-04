@@ -9,7 +9,6 @@ from .globals import PACKAGE_NAME
 ICON_SETS_DIR = 'icons'
 ICON_SET_INDEX_FILE_NAME = 'index.json'
 
-# NOTE Dont forget to update this when changing icon sets list
 class IconSets(Enum):
     # Values must be names of icon set directories
     Dev = 'dev'
@@ -26,9 +25,6 @@ def get_icon_set_path(icon_set:IconSets, separator:str='/'):
     ])
 
 def get_icon_set_data(icon_set:IconSets) -> dict:
-    # Returns data from the index file of chosen icon set as dict
-    # Can raise the same errors as importlib.resources.open_text, json.load
-
     path = '/'.join([
         get_icon_set_path(icon_set),
         ICON_SET_INDEX_FILE_NAME, 
@@ -44,9 +40,6 @@ def get_icon_set_data(icon_set:IconSets) -> dict:
     return data
 
 def get_icon_sets_data() -> dict:
-    # Returns a "icon set dir name" to "icon set json data" type of dict
-    # Can raise the same errors as get_icon_set_data
-
     out = {}
 
     for icon_set in IconSets:
@@ -96,7 +89,6 @@ def get_icon_bytes(
         retry_default_set:bool=True,
         retry_lower_index:bool=True,
         ) -> Union[bytes, None]:
-    # Returns byte data of the icon image file or None
     # If retry_default_set true will retry using the default set if icon wasnt found
     # If retry_lower_index true will retry with a lower index if no icon with given index found
 

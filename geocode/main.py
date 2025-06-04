@@ -2,7 +2,6 @@ from .autocomplete import autocomplete
 from .api import request_raw_locations_data
 from .format import Location, format_raw_locations_data, format_raw_location_data
 
-# NOTE I dont think that will be ever used
 def get_locations(search_input:str, use_autocomplete:bool=True) -> list:
     if use_autocomplete:
         search_input = autocomplete(search_input)

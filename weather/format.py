@@ -6,8 +6,6 @@ from . import globals
 from .colors import Color
 from .icons import IconSets, get_icon_bytes_io
 
-# TODO Should probably save all the accuracy values set below as consts
-
 class MeasurementSystems():
     METRIC = 0
     IMPERIAL = 1
@@ -55,7 +53,6 @@ class Value():
         self.value = value
 
     def set_unit(self, unit:str):
-        # TODO Could be divided by short & long versions
         self.unit = unit
 
     def set_accuracy(self, accuracy:int):

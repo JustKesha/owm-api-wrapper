@@ -22,5 +22,4 @@ with resources.open_text(PACKAGE_NAME, DATA_FILE_NAME) as file:
     DATA = json.load(file)
 
 with resources.open_text(PACKAGE_NAME, ENGLISH_FILE_NAME) as file:
-    # TODO Внести в файл величины
     ENGLISH = json.load(file)

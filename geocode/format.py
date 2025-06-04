@@ -38,7 +38,6 @@ class Location():
 
         return ', '.join(elements)
 
-    # NOTE Atm only used in a test discord command
     def get_str(self):
         return f'{" ".join([str(self.lat), str(self.lon)])} {self.get_address_str(full=True,include_type=True)} {self.country_code}'
 

@@ -1,8 +1,4 @@
-import json
-
-# TODO Switch to using Nominatim/OpenStreetMap api with no geopy
-import geopy # pip install geopy
-# from geopy.geocoders import Nominatim
+import geopy
 
 DEFAULT_ADDRESS_TYPES = [
     'city',
@@ -34,19 +30,14 @@ def request_raw_locations_data(search_input:str, address_types:list=DEFAULT_ADDR
     if search_input == None or len(search_input) == 0:
         return []
     
-    # Docs https://geopy.readthedocs.io/en/stable/index.html#geopy.geocoders.Nominatim.geocode
     results = geolocator.geocode(search_input, language='en-us', addressdetails=True, extratags=True, namedetails=True, exactly_one=False)
 
     if results == None or len(results) == 0:
         return []
     
-    # To raw api results
     raw_results = list(map(lambda loc: loc.raw, results))
-
-    # Sort by importance
     raw_results = sorted(raw_results, key=lambda raw_loc: raw_loc['importance'], reverse=True)
 
-    # If address_types not empty, only include results matching any of address_types
     if len(address_types) != 0:
         raw_results = [location for location in raw_results if location['addresstype'] in address_types]
     

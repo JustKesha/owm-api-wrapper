@@ -113,6 +113,9 @@ class TemperatureData():
         self.min = min
         self.max = max
         self.feels_like = feels_like
+    
+    def __str__(self) -> str:
+        return self.actual.get_str()
 
 class Pressure():
     def __init__(self, mbar:float=None) -> None:
@@ -190,6 +193,9 @@ class Wind():
 
         self.degree = Value(degree, '°', 0, '')
         self.cardinal_point = CardinalPoint(degree)
+    
+    def __str__(self) -> str:
+        return self.speed.get_str()
 
 class Time():
     def __init__(self, offset:int, sunrise:int, sunset:int) -> None:
@@ -332,6 +338,15 @@ class Weather():
         else:
             self.color = color
     
+    def __str__(self) -> str:
+        return ", ".join([
+            str(self.weather_code),
+            self.title,
+            self.description,
+            str(self.temperature),
+            str(self.wind)
+        ])
+
     def get_icon_name(self) -> str:
         return str(self.weather_code)
 

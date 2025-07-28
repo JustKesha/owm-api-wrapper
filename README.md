@@ -1,7 +1,7 @@
 # Custom [Open Weather Map API](https://openweathermap.org/api) Wrapper
 
 This is a custom Python 3.10 wrapper around the [OWM API](https://openweathermap.org/api),<br>
-It was created specifically to be used for [this weather bot repository](../discord-owm-bot).
+It was created specifically to be used for [this weather bot repository](../../../discord-owm-bot).
 
 > [!NOTE]
 > This repo was created for mainly learning purposes,
